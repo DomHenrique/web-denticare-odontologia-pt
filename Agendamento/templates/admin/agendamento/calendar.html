@@ -1,0 +1,78 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block extrahead %}
+{{ block.super }}
+<link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.css' rel='stylesheet' />
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
+<style>
+    #calendar {
+        max-width: 100%;
+        margin: 20px auto;
+        padding: 0 10px;
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .fc-event {
+        cursor: pointer;
+    }
+    .legend {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 20px;
+        padding: 0 10px;
+    }
+    .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+    .color-box {
+        width: 15px;
+        height: 15px;
+        border-radius: 3px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="legend">
+    <div class="legend-item"><div class="color-box" style="background:#ffc107"></div> Pendente</div>
+    <div class="legend-item"><div class="color-box" style="background:#28a745"></div> Confirmado</div>
+    <div class="legend-item"><div class="color-box" style="background:#dc3545"></div> Cancelado</div>
+    <div class="legend-item"><div class="color-box" style="background:#007bff"></div> Finalizado</div>
+</div>
+
+<div id='calendar'></div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
+        var events = {{ events|safe }};
+
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'timeGridWeek',
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,timeGridDay'
+            },
+            locale: 'pt-br',
+            events: events,
+            slotMinTime: '08:00:00',
+            slotMaxTime: '20:00:00',
+            allDaySlot: false,
+            eventClick: function(info) {
+                if (info.event.url) {
+                    window.location.href = info.event.url;
+                    info.jsEvent.preventDefault();
+                }
+            }
+        });
+
+        calendar.render();
+    });
+</script>
+{% endblock %}

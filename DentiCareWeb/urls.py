@@ -32,6 +32,6 @@ urlpatterns = [
     path('carrinho/', include('Carrinho.urls')),
 
     path('pedidos/', include('Pedido.urls')),
-
+    path('agendamento/', include('Agendamento.urls')),
     path('produtos/', include('Produtos.urls')),
 ]

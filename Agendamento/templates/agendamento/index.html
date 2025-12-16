@@ -1,0 +1,545 @@
+{% extends 'Inicio/base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    /* Premium Styles for Scheduling Wizard */
+    :root {
+        --primary-color: #00a0e6;
+        --secondary-color: #0088cc;
+        --bg-color: #f8f9fa;
+        --card-bg: #ffffff;
+        --text-color: #333;
+        --border-radius: 12px;
+        --shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        --transition: all 0.3s ease;
+    }
+
+    body {
+        background-color: var(--bg-color);
+    }
+
+    .wizard-container {
+        max-width: 900px;
+        margin: 100px auto 50px;
+        padding: 0 15px;
+    }
+
+    .wizard-card {
+        background: var(--card-bg);
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow);
+        padding: 40px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .step-indicator {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 40px;
+        position: relative;
+    }
+
+    .step-indicator::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 20%;
+        right: 20%;
+        height: 2px;
+        background: #e0e0e0;
+        z-index: 0;
+        transform: translateY(-50%);
+    }
+
+    .step-dot {
+        width: 40px;
+        height: 40px;
+        background: #fff;
+        border: 2px solid #e0e0e0;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #999;
+        font-weight: bold;
+        z-index: 1;
+        margin: 0 30px;
+        transition: var(--transition);
+        position: relative;
+    }
+
+    .step-dot.active {
+        border-color: var(--primary-color);
+        background: var(--primary-color);
+        color: white;
+        box-shadow: 0 0 0 4px rgba(0, 160, 230, 0.2);
+    }
+
+    .step-dot.completed {
+        border-color: var(--primary-color);
+        background: var(--primary-color);
+        color: white;
+    }
+
+    .wizard-step {
+        display: none;
+        animation: fadeIn 0.5s ease;
+    }
+
+    .wizard-step.active {
+        display: block;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    h2 {
+        color: var(--text-color);
+        text-align: center;
+        margin-bottom: 30px;
+        font-weight: 700;
+    }
+
+    /* Service Cards */
+    .service-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+    }
+
+    .service-card {
+        border: 2px solid transparent;
+        border-radius: var(--border-radius);
+        padding: 20px;
+        text-align: center;
+        cursor: pointer;
+        transition: var(--transition);
+        background: #fdfdfd;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    }
+
+    .service-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+    }
+
+    .service-card.selected {
+        border-color: var(--primary-color);
+        background-color: rgba(0, 160, 230, 0.05);
+    }
+
+    .service-icon {
+        font-size: 2.5rem;
+        color: var(--primary-color);
+        margin-bottom: 15px;
+    }
+
+    /* Calendar & Time Slots */
+    .calendar-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+        gap: 10px;
+        margin-bottom: 30px;
+    }
+
+    .date-card {
+        padding: 15px 10px;
+        border: 1px solid #eee;
+        border-radius: 8px;
+        text-align: center;
+        cursor: pointer;
+        transition: var(--transition);
+    }
+
+    .date-card:hover, .date-card.selected {
+        background: var(--primary-color);
+        color: white;
+        border-color: var(--primary-color);
+    }
+
+    .time-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+        gap: 10px;
+    }
+
+    .time-slot {
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        background: white;
+        cursor: pointer;
+        text-align: center;
+        transition: var(--transition);
+    }
+
+    .time-slot:hover, .time-slot.selected {
+        background: var(--secondary-color);
+        color: white;
+        border-color: var(--secondary-color);
+    }
+
+    /* Form Inputs */
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-control {
+        border-radius: 8px;
+        padding: 12px;
+        border: 1px solid #ddd;
+    }
+
+    .form-control:focus {
+        box-shadow: 0 0 0 3px rgba(0, 160, 230, 0.2);
+        border-color: var(--primary-color);
+    }
+
+    /* Navigation Buttons */
+    .wizard-navigation {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 40px;
+    }
+
+    .btn-nav {
+        padding: 12px 30px;
+        border-radius: 30px;
+        font-weight: 600;
+        transition: var(--transition);
+    }
+
+    .btn-prev {
+        background: #e0e0e0;
+        color: #666;
+        border: none;
+    }
+
+    .btn-prev:hover {
+        background: #d0d0d0;
+    }
+
+    .btn-next {
+        background: var(--primary-color);
+        color: white;
+        border: none;
+    }
+
+    .btn-next:hover {
+        background: var(--secondary-color);
+        transform: translateY(-2px);
+    }
+    
+    .btn-next:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+        transform: none;
+    }
+</style>
+
+<div class="wizard-container">
+    <div class="wizard-card">
+        <div class="step-indicator">
+            <div class="step-dot active" data-step="1">1</div>
+            <div class="step-dot" data-step="2">2</div>
+            <div class="step-dot" data-step="3">3</div>
+            <div class="step-dot" data-step="4">4</div>
+        </div>
+
+        <form id="bookingForm">
+            <!-- Step 1: Services -->
+            <div class="wizard-step active" id="step1">
+                <h2>Selecione o Serviço</h2>
+                <div class="service-grid">
+                    {% for servico in servicos %}
+                    <div class="service-card" onclick="selectService({{ servico.id }}, '{{ servico.titulo }}')">
+                        <div class="service-icon">
+                            {% if servico.imagem %}
+                                <img src="{{ servico.imagem.url }}" alt="{{ servico.titulo }}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 50%;">
+                            {% else %}
+                                <i class="bi bi-star"></i>
+                            {% endif %}
+                        </div>
+                        <h5>{{ servico.titulo }}</h5>
+                    </div>
+                    {% endfor %}
+                </div>
+                <input type="hidden" id="selectedServiceId" name="servico_id" required>
+                <input type="hidden" id="selectedServiceName">
+            </div>
+
+            <!-- Step 2: Date -->
+            <div class="wizard-step" id="step2">
+                <h2 id="serviceTitleStep2">Selecione a Data</h2>
+                <div id="loadingDates" class="text-center d-none">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Carregando...</span>
+                    </div>
+                </div>
+                <!-- We will assign first professional found for now or list them if multiple -->
+                <input type="hidden" id="selectedProfessionalId"> 
+                <div class="calendar-container" id="datesContainer">
+                    <!-- Dates loaded via JS -->
+                </div>
+                <input type="hidden" id="selectedDate" name="data" required>
+            </div>
+
+            <!-- Step 3: Time -->
+            <div class="wizard-step" id="step3">
+                <h2 id="dateTitleStep3">Selecione o Horário</h2>
+                <div id="loadingTimes" class="text-center d-none">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Carregando...</span>
+                    </div>
+                </div>
+                <div class="time-grid" id="timesContainer">
+                    <!-- Times loaded via JS -->
+                </div>
+                <input type="hidden" id="selectedTime" name="horario" required>
+            </div>
+
+            <!-- Step 4: Details -->
+            <div class="wizard-step" id="step4">
+                <h2>Seus Dados</h2>
+                <div class="form-group">
+                    <label class="form-label">Nome Completo</label>
+                    <input type="text" class="form-control" id="nomeCliente" name="nome" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">WhatsApp (com DDD)</label>
+                    <input type="tel" class="form-control" id="whatsappCliente" name="whatsapp" placeholder="Ex: 11999999999" required>
+                </div>
+                 <div class="form-group">
+                    <label class="form-label">Observações (Opcional)</label>
+                    <textarea class="form-control" id="observacoes" name="observacoes" rows="3"></textarea>
+                </div>
+                
+                <div class="alert alert-info mt-3">
+                    <i class="bi bi-info-circle-fill"></i> Ao confirmar, você será redirecionado para o WhatsApp para finalizar o agendamento.
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div class="wizard-navigation">
+                <button type="button" class="btn btn-nav btn-prev" id="prevBtn" onclick="nextPrev(-1)">Voltar</button>
+                <button type="button" class="btn btn-nav btn-next" id="nextBtn" onclick="nextPrev(1)">Continuar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    let currentStep = 1;
+    const totalSteps = 4;
+
+    function showStep(n) {
+        let steps = document.getElementsByClassName("wizard-step");
+        for (let i = 0; i < steps.length; i++) {
+            steps[i].classList.remove("active");
+        }
+        steps[n - 1].classList.add("active");
+
+        // Update indicators
+        let dots = document.getElementsByClassName("step-dot");
+        for (let i = 0; i < dots.length; i++) {
+            dots[i].className = dots[i].className.replace(" active", "");
+            if (i < n) dots[i].classList.add("active");
+            if (i < n - 1) dots[i].classList.add("completed");
+        }
+
+        // Buttons
+        if (n == 1) {
+            document.getElementById("prevBtn").style.display = "none";
+        } else {
+            document.getElementById("prevBtn").style.display = "inline";
+        }
+
+        let nextBtn = document.getElementById("nextBtn");
+        if (n == totalSteps) {
+            nextBtn.innerHTML = "Agendar e Confirmar";
+            nextBtn.classList.remove("btn-primary");
+            nextBtn.classList.add("btn-success");
+        } else {
+            nextBtn.innerHTML = "Continuar";
+            nextBtn.classList.remove("btn-success");
+            nextBtn.classList.add("btn-primary");
+        }
+    }
+
+    function nextPrev(n) {
+        if (n == 1 && !validateForm()) return false;
+        
+        if (n == 1 && currentStep == totalSteps) {
+            submitBooking();
+            return;
+        }
+
+        currentStep += n;
+        showStep(currentStep);
+        
+        if (currentStep == 2 && n == 1) loadDates();
+        if (currentStep == 3 && n == 1) loadTimes();
+    }
+
+    function validateForm() {
+        let valid = true;
+        
+        if (currentStep == 1 && !document.getElementById('selectedServiceId').value) {
+            alert("Por favor, selecione um serviço.");
+            valid = false;
+        }
+        if (currentStep == 2 && !document.getElementById('selectedDate').value) {
+            alert("Por favor, selecione uma data.");
+            valid = false;
+        }
+        if (currentStep == 3 && !document.getElementById('selectedTime').value) {
+            alert("Por favor, selecione um horário.");
+            valid = false;
+        }
+        if (currentStep == 4) {
+            if (!document.getElementById('nomeCliente').value || !document.getElementById('whatsappCliente').value) {
+                alert("Por favor, preencha todos os campos obrigatórios.");
+                valid = false;
+            }
+        }
+        
+        return valid;
+    }
+
+    // Step 1: Select Service
+    function selectService(id, title) {
+        document.getElementById('selectedServiceId').value = id;
+        document.getElementById('selectedServiceName').value = title;
+        
+        // Highlight logic
+        let cards = document.getElementsByClassName('service-card');
+        for(let card of cards) card.classList.remove('selected');
+        event.currentTarget.classList.add('selected');
+
+        // Fetch professionals logic (Auto select first for now)
+        fetch(`/agendamento/api/profissionais/${id}/`)
+        .then(response => response.json())
+        .then(data => {
+            if(data.length > 0) {
+                document.getElementById('selectedProfessionalId').value = data[0].id;
+            } else {
+                alert("Desculpe, não há profissionais disponíveis para este serviço no momento.");
+                document.getElementById('selectedServiceId').value = ""; // Reset
+            }
+        });
+    }
+
+    // Step 2: Load Dates
+    function loadDates() {
+        let profId = document.getElementById('selectedProfessionalId').value;
+        if(!profId) return;
+        
+        document.getElementById('loadingDates').classList.remove('d-none');
+        document.getElementById('datesContainer').innerHTML = '';
+
+        fetch(`/agendamento/api/dias/?profissional_id=${profId}`)
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('loadingDates').classList.add('d-none');
+            let container = document.getElementById('datesContainer');
+            
+            if(data.length === 0) {
+                container.innerHTML = '<p class="text-center w-100">Não há datas disponíveis.</p>';
+                return;
+            }
+
+            data.forEach(dia => {
+                let div = document.createElement('div');
+                div.className = 'date-card';
+                div.innerHTML = `<div>${dia.dia_semana.substr(0,3)}</div><strong>${dia.display.substr(0,5)}</strong>`;
+                div.onclick = () => selectDate(div, dia.data);
+                container.appendChild(div);
+            });
+        });
+    }
+
+    function selectDate(element, dateStr) {
+        document.getElementById('selectedDate').value = dateStr;
+        let cards = document.getElementsByClassName('date-card');
+        for(let card of cards) card.classList.remove('selected');
+        element.classList.add('selected');
+    }
+
+    // Step 3: Load Times
+    function loadTimes() {
+        let profId = document.getElementById('selectedProfessionalId').value;
+        let dateVal = document.getElementById('selectedDate').value;
+        
+        document.getElementById('loadingTimes').classList.remove('d-none');
+        document.getElementById('timesContainer').innerHTML = '';
+
+        fetch(`/agendamento/api/horarios/?profissional_id=${profId}&data=${dateVal}`)
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('loadingTimes').classList.add('d-none');
+            let container = document.getElementById('timesContainer');
+            
+            if(data.length === 0) {
+                container.innerHTML = '<p class="text-center w-100">Sem horários disponíveis para esta data.</p>';
+                return;
+            }
+
+            data.forEach(time => {
+                let div = document.createElement('div');
+                div.className = 'time-slot';
+                div.innerText = time;
+                div.onclick = () => selectTime(div, time);
+                container.appendChild(div);
+            });
+        });
+    }
+
+    function selectTime(element, timeStr) {
+        document.getElementById('selectedTime').value = timeStr;
+        let slots = document.getElementsByClassName('time-slot');
+        for(let slot of slots) slot.classList.remove('selected');
+        element.classList.add('selected');
+    }
+
+    // Submit
+    function submitBooking() {
+        const formData = {
+            servico_id: document.getElementById('selectedServiceId').value,
+            profissional_id: document.getElementById('selectedProfessionalId').value,
+            data: document.getElementById('selectedDate').value,
+            horario: document.getElementById('selectedTime').value,
+            nome: document.getElementById('nomeCliente').value,
+            whatsapp: document.getElementById('whatsappCliente').value,
+            observacoes: document.getElementById('observacoes').value
+        };
+
+        fetch('/agendamento/confirmar/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.status === 'success') {
+                // Redirect to WhatsApp
+                let message = `Olá, gostaria de confirmar meu agendamento na *Uteich Odontologia*:\n\n` +
+                              `*Serviço:* ${document.getElementById('selectedServiceName').value}\n` +
+                              `*Data:* ${formData.data}\n` +
+                              `*Horário:* ${formData.horario}\n` +
+                              `*Nome:* ${formData.nome}`;
+                window.location.href = `https://wa.me/5511999999999?text=${encodeURIComponent(message)}`;
+            } else {
+                alert("Erro ao realizar agendamento: " + data.message);
+            }
+        });
+    }
+
+    showStep(currentStep);
+</script>
+{% endblock %}
