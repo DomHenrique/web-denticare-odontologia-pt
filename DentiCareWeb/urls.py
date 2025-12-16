@@ -22,16 +22,16 @@ urlpatterns = [
 
     path('', include('Inicio.urls')),
 
-    path('servicios/', include('Servicios.urls')),
+    path('servicos/', include('Servicos.urls')),
 
-    path('contacto/', include('Contacto.urls')),
+    path('contato/', include('Contato.urls')),
 
-    path('autenticacion/', include('Autenticacion.urls')),
+    path('autenticacao/', include('Autenticacao.urls')),
 
 
-    path('carro/', include('Carrito.urls')),
+    path('carrinho/', include('Carrinho.urls')),
 
-    path('pedido/', include('Pedido.urls')),
+    path('pedidos/', include('Pedido.urls')),
 
-    path('productos/', include('Productos.urls')),
+    path('produtos/', include('Produtos.urls')),
 ]

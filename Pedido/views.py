@@ -1,57 +1,57 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from Carrito.carro import Carro
-from Pedido.models import LineaPedido, Pedido
+from Carrinho.carrinho import Carrinho
+from Pedido.models import ItemPedido, Pedido
 from django.contrib import messages
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from django.core.mail import send_mail
 
 # Agrega esta función antes de procesar_pedido
-def formatear_lineas_pedido(lineas_pedido):
-    return ", ".join([f"{linea.cantidad} unidades de {linea.producto.nombre}" for linea in lineas_pedido])
+def formatar_itens_pedido(itens_pedido):
+    return ", ".join([f"{item.quantidade} unidades de {item.produto.nome}" for item in itens_pedido])
 
-@login_required(login_url="autenticacion/logear")
-def procesar_pedido(request):
+@login_required(login_url="autenticacao/login")
+def processar_pedido(request):
     pedido = Pedido.objects.create(user=request.user)
-    carro = Carro(request)
-    lineas_pedido = list()
-    for key, value in carro.carro.items():
-        lineas_pedido.append(LineaPedido(
-            producto_id=key,
-            cantidad = value['cantidad'],
+    carrinho = Carrinho(request)
+    itens_pedido = list()
+    for key, value in carrinho.carrinho.items():
+        itens_pedido.append(ItemPedido(
+            produto_id=key,
+            quantidade = value['quantidade'],
             user=request.user,
             pedido = pedido
         ))
 
-    LineaPedido.objects.bulk_create(lineas_pedido)
+    ItemPedido.objects.bulk_create(itens_pedido)
 
     # Usa la nueva función aquí
-    lineas_texto = formatear_lineas_pedido(lineas_pedido)
+    itens_texto = formatar_itens_pedido(itens_pedido)
 
-    enviar_mail(
+    enviar_email(
         pedido=pedido,
-        lineas_pedido=lineas_pedido,
-        lineas_texto=lineas_texto,  # Agrega esto
-        nombreusuario=request.user.username,
+        itens_pedido=itens_pedido,
+        itens_texto=itens_texto,  # Agrega esto
+        nomeusuario=request.user.username,
         emailusuario=request.user.email
     )
 
-    messages.success(request, 'El pedido se ha creado correctamente')
+    messages.success(request, 'O pedido foi criado corretamente')
 
-    return redirect("../productos")
+    return redirect("../produtos")
 
-def enviar_mail(**kwargs):
-    asunto = "Nuevo pedido DentiCare - Gracias"
-    mensaje= render_to_string("emails/pedido.html", {
+def enviar_email(**kwargs):
+    assunto = "Novo pedido DentiCare - Obrigado"
+    mensagem= render_to_string("emails/pedido.html", {
         "pedido": kwargs.get("pedido"),
-        "lineas_pedido": kwargs.get("lineas_pedido"),
-        "lineas_texto": kwargs.get("lineas_texto"),  # Y aquí también
-        "nombreusuario":kwargs.get("nombreusuario"),
+        "itens_pedido": kwargs.get("itens_pedido"),
+        "itens_texto": kwargs.get("itens_texto"),  # Y aquí también
+        "nomeusuario":kwargs.get("nomeusuario"),
     })
 
-    mensaje_texto = strip_tags(mensaje)
-    from_email="miguelpaucar987@gmail.ccom"
+    mensagem_texto = strip_tags(mensagem)
+    from_email="miguelpaucar987@gmail.com"
     to='mpaucarporras@gmail.com'
 
-    send_mail(asunto, mensaje_texto, from_email, [to], html_message=mensaje)
+    send_mail(assunto, mensagem_texto, from_email, [to], html_message=mensagem)

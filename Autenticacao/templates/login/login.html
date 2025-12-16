@@ -1,0 +1,76 @@
+{% extends "Inicio/base.html" %}
+
+{% load static %}
+
+{% block content%}
+<style>
+    .login-container {
+        background-color: #f0f0f0;
+        border-radius: 8px;
+        width: 300px;
+        padding: 20px;
+        margin: 110px auto 0;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .login-form {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .login-form h2 {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .login-form .form-label {
+        margin-bottom: 5px;
+    }
+
+    .login-form .form-control {
+        margin-bottom: 15px;
+    }
+
+    .login-form .btn-login {
+        background-color: #000;
+        color: white;
+    }
+
+    .login-form .link-registro {
+        text-align: center;
+        margin-top: 15px;
+    }
+
+    .login-form .link-registro a {
+        color: blue;
+        text-decoration: none;
+    }
+</style>
+<div class="login-container">
+    <form class="login-form" method="POST">
+        {% csrf_token %}
+        <h2>Fazer Login</h2>
+
+        <label for="username" class="form-label">Usuario</label>
+        <input type="text" id="username" name="username" class="form-control" required placeholder="User">
+
+        <label for="password" class="form-label">Senha</label>
+        <input type="password" id="password" name="password" class="form-control" required
+            placeholder="************************">
+
+        <button type="submit" class="btn btn-login">Entrar</button>
+
+        {% if messages %}
+        {% for mensaje in messages %}
+        <div class="alert alert-{{ mensaje.tags }} mt-3">{{ mensaje }}</div>
+        {% endfor %}
+        {% endif %}
+
+        <p class="link-registro">
+            E a sua primeira vez? <a href="{% url 'autenticacao' %}">Cadastre-se</a>
+        </p>
+    </form>
+</div>
+
+{% endblock %}

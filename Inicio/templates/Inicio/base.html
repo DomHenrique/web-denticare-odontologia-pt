@@ -1,6 +1,6 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="es">
+<html lang="pt-br">
 
 <head>
     <meta charset="UTF-8">
@@ -38,23 +38,23 @@
                 </form>
 
                 <div class="d-flex align-items-center gap-4">
-                    <a href="{% url 'productos' %}" class="text-decoration-none">Productos</a>
+                    <a href="{% url 'produtos' %}" class="text-decoration-none">Produtos</a>
                     <a href="admin/" class="text-decoration-none ">Intranet</a>
-                    <button class="btn contact-btn"><a href="{% url 'contacto' %}"
-                            class="btncontact">Contáctanos</a></button>
+                    <button class="btn contact-btn"><a href="{% url 'contato' %}"
+                            class="btncontact">Contate-nos</a></button>
                     <div class="position-relative">
 
                         <button class="icon-class" data-bs-toggle="offcanvas" data-bs-target="#shoppingCart">
                             <i class="bi bi-cart fs-3"></i>
                         </button>
 
-                        <span class="cart-badge">{{total_producto}}</span>
+                        <span class="cart-badge">{{total_produto}}</span>
                     </div>
                     {% if user.is_authenticated %}
                         <a href="">{{user.username}}</a>
-                        <a href="{% url 'cerrar_sesion' %}">Cerrar sesion</a>
+                        <a href="{% url 'logout' %}">Sair</a>
                     {% else %}
-                        <a href="{% url 'logear' %}">Login</a>
+                        <a href="{% url 'login' %}">Entrar</a>
                     {% endif %}
                 </div>
             </div>
@@ -72,10 +72,10 @@
 
 
     {% endblock%}
-    <!--carrito de compras -->
+    <!--carrinho de compras -->
     <div class="offcanvas offcanvas-end" tabindex="-1" id="shoppingCart" style="width: 400px;">
         <div class="offcanvas-header border-bottom">
-            <h5 class="offcanvas-title">Carrito de compras</h5>
+            <h5 class="offcanvas-title">Carrinho de compras</h5>
             <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
         <div class="offcanvas-body d-flex flex-column">
@@ -83,18 +83,18 @@
             <div class="flex-grow-1">
             {% if request.user.is_authenticated %}
                 <!-- Item 1 -->
-                {% if request.session.carro.items %}
-                    {% for key, value in request.session.carro.items %}
+                {% if request.session.carrinho.items %}
+                    {% for key, value in request.session.carrinho.items %}
                         <div class="cart-item mb-3">
                             <div class="d-flex gap-3">
-                                <img src="{{value.imagen}}" alt="Cadena de Poder" class="rounded"
+                                <img src="{{value.imagem}}" alt="Produto" class="rounded"
                                     style="width: 80px; height: 80px; object-fit: cover;">
                                 <div class="flex-grow-1">
                                     <div class="d-flex align-items-start justify-content-between mb-1">
                                         <div>
-                                            <h6 class="mb-0">{{value.nombre}}</h6>
+                                            <h6 class="mb-0">{{value.nome}}</h6>
                                         </div>
-                                        <a href="{% url 'carro:eliminar' value.producto_id %}">
+                                        <a href="{% url 'carrinho:remover' value.produto_id %}">
                                             <button class="btn p-0 text-danger">
                                                 <i class="bi bi-trash3"></i>
                                             </button>
@@ -103,13 +103,13 @@
                                     <div class="d-flex justify-content-between align-items-center">
                                         <div>
                                             <small class="text-decoration-line-through text-muted"></small>
-                                            <div class="fw-bold">S/. {{value.precio}} </div>
+                                            <div class="fw-bold">R$ {{value.preco}} </div>
                                         </div>
                                         <div class="d-flex align-items-center gap-2">
-                                            <a href="{% url 'carro:restar' value.producto_id %}"><button class="btn btn-sm rounded-circle"
+                                            <a href="{% url 'carrinho:subtrair' value.produto_id %}"><button class="btn btn-sm rounded-circle"
                                                     style="background-color: #00a0e6; color: white; width: 24px; height: 24px; padding: 0;">-</button></a>
-                                            <span>{{value.cantidad}}</span>
-                                            <a href="{% url 'carro:agregar' value.producto_id %}"><button class="btn btn-sm rounded-circle"
+                                            <span>{{value.quantidade}}</span>
+                                            <a href="{% url 'carrinho:adicionar' value.produto_id %}"><button class="btn btn-sm rounded-circle"
                                                     style="background-color: #00a0e6;; color: white; width: 24px; height: 24px; padding: 0;">+</button></a>
                                         </div>
                                     </div>
@@ -118,18 +118,18 @@
                         </div>
                     {% endfor %}
                 {% else %}
-                <h5 style="color: #00a0e6;">Sin productos</h5>
+                <h5 style="color: #00a0e6;">Sem produtos</h5>
                 {% endif %}
             {% else %}
-                <h5>Debes logearte</h5>
+                <h5>Voce deve entrar</h5>
             {% endif %}
             </div>
 
             <!-- Checkout Button -->
-            {% if request.session.carro.items %}
+            {% if request.session.carrinho.items %}
             <button class="btn btn-lg w-100 rounded-3 text-white"
                 style="background: linear-gradient(to right, #00a0e6, #0088cc);">
-                <a href="{% url 'procesar_pedido'%}" style="color: white;">Pagar: S/. {{importe_total_carro}}</a>
+                <a href="{% url 'processar_pedido'%}" style="color: white;">Pagar: R$ {{valor_total_carrinho}}</a>
             </button>
             {% endif %}
         </div>
@@ -138,7 +138,7 @@
 
 
 
-    <!--Pie de página o footer-->
+    <!--Rodape-->
     <footer class="py-5" style="background-color: #e8f6f9;">
         <div class="container">
             <div class="row mb-5">
@@ -150,7 +150,7 @@
                         <a href="mailto:info@clickdental.com.pe"
                             class="text-decoration-none d-flex align-items-center gap-2">
                             <i class="bi bi-envelope text-primary"></i>
-                            <span class="text-primary">info@denticare.com.pe</span>
+                            <span class="text-primary">info@denticare.com.br</span>
                         </a>
                         <div class="d-flex align-items-center gap-2">
                             <i class="bi bi-telephone text-primary"></i>
@@ -178,16 +178,16 @@
 
                 <!-- Products Column -->
                 <div class="col-lg-3 mb-4 mb-lg-0">
-                    <h5 class="text-dark mb-3">Productos</h5>
+                    <h5 class="text-dark mb-3">Produtos</h5>
                     <ul class="list-unstyled">
-                        <li class="mb-2"><a href="#" class="text-primary text-decoration-none">Desechables</a></li>
-                        <li class="mb-2"><a href="#" class="text-primary text-decoration-none">Endodoncia</a></li>
-                        <li class="mb-2"><a href="#" class="text-primary text-decoration-none">Ortodoncia</a></li>
+                        <li class="mb-2"><a href="#" class="text-primary text-decoration-none">Descartaveis</a></li>
+                        <li class="mb-2"><a href="#" class="text-primary text-decoration-none">Endodontia</a></li>
+                        <li class="mb-2"><a href="#" class="text-primary text-decoration-none">Ortodontia</a></li>
                         <li class="mb-2"><a href="#" class="text-primary text-decoration-none">Higiene</a></li>
                         <li class="mb-2"><a href="#" class="text-primary text-decoration-none">Instrumentos
                                 Rotatorios</a></li>
-                        <li class="mb-2"><a href="#" class="text-primary text-decoration-none">Profilaxis</a></li>
-                        <li class="mb-2"><a href="#" class="text-primary text-decoration-none">Pulido y Acabado</a></li>
+                        <li class="mb-2"><a href="#" class="text-primary text-decoration-none">Profilaxia</a></li>
+                        <li class="mb-2"><a href="#" class="text-primary text-decoration-none">Polimento e Acabamento</a></li>
                         <li class="mb-2"><a href="#" class="text-primary text-decoration-none">Laboratorio</a></li>
                     </ul>
                 </div>
@@ -198,20 +198,20 @@
                         <li class="mb-2"><a href="#" class="text-primary text-decoration-none fw-bold">Ofertas</a></li>
                         <li class="mb-2"><a href="#" class="text-primary text-decoration-none fw-bold">Eventos</a></li>
                         <li class="mb-2"><a href="#" class="text-primary text-decoration-none fw-bold">Videos
-                                Instructivos</a></li>
-                        <li class="mb-2"><a href="#" class="text-primary text-decoration-none fw-bold">Nosotros</a></li>
+                                Instrutivos</a></li>
+                        <li class="mb-2"><a href="#" class="text-primary text-decoration-none fw-bold">Sobre Nos</a></li>
                         <li class="mb-2"><a href="#"
                                 class="text-primary text-decoration-none fw-bold">Distribuidores</a></li>
-                        <li class="mb-2"><a href="#" class="text-primary text-decoration-none fw-bold">Servicio
-                                Técnico</a></li>
+                        <li class="mb-2"><a href="#" class="text-primary text-decoration-none fw-bold">Assistencia
+                                Tecnica</a></li>
                     </ul>
                 </div>
 
                 <!-- Quick Links Column 2 -->
                 <div class="col-lg-3">
                     <ul class="list-unstyled">
-                        <li class="mb-2"><a href="#" class="text-primary text-decoration-none fw-bold">Contacto</a></li>
-                        <li class="mb-2"><a href="#" class="text-primary text-decoration-none fw-bold">Descargas</a>
+                        <li class="mb-2"><a href="#" class="text-primary text-decoration-none fw-bold">Contato</a></li>
+                        <li class="mb-2"><a href="#" class="text-primary text-decoration-none fw-bold">Downloads</a>
                         </li>
                         <li class="mb-2"><a href="#" class="text-primary text-decoration-none fw-bold">Blog</a></li>
                         <li class="mb-2"><a href="#" class="text-primary text-decoration-none fw-bold">Intranet</a></li>
@@ -221,7 +221,7 @@
 
             <!-- Copyright -->
             <div class="text-center text-muted">
-                <small>© 2024 DENTICARE. Todos los derechos reservados.</small>
+                <small>© 2024 DENTICARE. Todos os direitos reservados.</small>
             </div>
         </div>
     </footer>

@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth import get_user_model
-from Productos.models import Producto
+from Produtos.models import Produto
 from django.db.models import F, Sum, FloatField
 
 # Create your models here.
@@ -8,15 +8,15 @@ User=get_user_model()
 
 class Pedido(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    created_at=models.DateTimeField(auto_now_add=True)
+    criado_em=models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.id
+        return str(self.id)
     
     @property
     def total(self):
-        return self.lineapedido_set.aggregate(
-            total = Sum(F("precio")*F("cantidad"), output_fiel=FloatField)
+        return self.itempedido_set.aggregate(
+            total = Sum(F("preco")*F("quantidade"), output_field=FloatField)
         )["total"] 
 
     class Meta:
@@ -26,18 +26,18 @@ class Pedido(models.Model):
         ordering=['id']
 
 
-class LineaPedido(models.Model):
+class ItemPedido(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
+    produto = models.ForeignKey(Produto, on_delete=models.CASCADE)
     pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE)
-    cantidad=models.IntegerField(default=1)
-    created_at=models.DateTimeField(auto_now_add=True)
+    quantidade=models.IntegerField(default=1)
+    criado_em=models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f'{self.cantidad} unidades de {self.producto.nombre}'
+        return f'{self.quantidade} unidades de {self.produto.nome}'
     
     class Meta:
-        db_table='lineapedidos'
-        verbose_name = 'Línea Pedido'
-        verbose_name_plural = 'Líneas Pedidos'
+        db_table='itens_pedido'
+        verbose_name = 'Item Pedido'
+        verbose_name_plural = 'Itens Pedidos'
         ordering=['id']

@@ -1,0 +1,73 @@
+{% extends "Inicio/base.html" %}
+
+{% load static %}
+
+
+{% block content%}
+<!--Informacoes ou detalhes do produto-->
+<section class="product-detail py-5" style="background-color: #ecf0f1;">
+    <div class="container">
+        <div class="row">
+            <!-- Product Gallery -->
+            <div class="col-md-6">
+                <div class="d-flex gap-4">
+                    <!-- Main Image -->
+                    <div class="main-image position-relative">
+                        <img src="{{producto.imagem_producto.url}}" alt="{{producto.nome}}"
+                            class="img-fluid rounded" style="max-width: 400px;">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product Info -->
+            <div class="col-md-6">
+                <div class="product-info">
+                    <!-- Product Title -->
+                    <h1 class="display-6 fw-bold mb-3">{{producto.nome}}</h1>
+
+                    <!-- Product Details -->
+                    <div class="mb-3">
+                        <p class="mb-1 text-muted">SKU: {{producto.sku}}</p>
+                        <p class="mb-3">Categoria: <a href="#" class="text-decoration-none">{{producto.categorias.nome}}</a></p>
+                    </div>
+
+                    <!-- Price -->
+                    <div class="mb-4">
+                        <span class="text-decoration-line-through text-muted me-2"></span>
+                        <span class="fs-2 fw-bold" style="color: #7161ef;">R$ {{producto.preco}}</span>
+                    </div>
+                    <!-- Add to Cart Button -->
+                    <a href="{% url 'carrinho:adicionar' producto.id %}">
+                        <button class="btn btn-primary mb-4 px-4 py-2" style="border-radius: 25px;">
+                            Adicionar ao Carrinho
+                        </button>
+                    </a>
+
+                    <!-- Product Specifications -->
+                    <div class="specifications">
+                        <div class="row mb-2">
+                            <div class="col-3 fw-bold">Marca:</div>
+                            <div class="col">{{producto.marca}}</div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-3 fw-bold">Apresentacao:</div>
+                            <div class="col">{{producto.apresentacao}}</div>
+                        </div>
+                        <div class="row mb-4">
+                            <div class="col-3 fw-bold">Codigo Interno:</div>
+                            <div class="col">
+                                {{producto.codigo_interno}}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Product Description -->
+                    <p class="text-muted">
+                        {{producto.descricao}}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,27 +1,21 @@
 from django.shortcuts import render, HttpResponse
-from Carrito.carro import Carro
-from Servicios.models import Servicio
-from Productos.models import Producto
+from Carrinho.carrinho import Carrinho
+from Servicos.models import Servico
+from Produtos.models import Produto
 
 # Create your views here.
 
 
 def Inicio(request):
-    carro = Carro(request)
-    servicios = Servicio.objects.all()
-    productos = Producto.objects.all()
+    carrinho = Carrinho(request)
+    servicos = Servico.objects.all()
+    produtos = Produto.objects.all()
 
-    return render(request, "Inicio/inicio.html",{'servicios':servicios, 'products':productos})
+    return render(request, "Inicio/inicio.html",{'servicos':servicos, 'produtos':produtos})
 
 def ViewProd(request, id):
-    infoprod = Producto.objects.get(id = id)
-    nombre = infoprod.nombre
-    precio = infoprod.precio
-    imagen = infoprod.imagen_producto
-    return render (request, 'Productos/infoprod.html', {'infoprod': infoprod, 'nombre':nombre, 'precio':precio, 'imagen': imagen})
-
-
-
-
-
-
+    infoprod = Produto.objects.get(id=id)
+    nome = infoprod.nome
+    preco = infoprod.preco
+    imagem = infoprod.imagem_produto
+    return render (request, 'Inicio/infoprod.html', {'infoprod': infoprod, 'nome':nome, 'preco':preco, 'imagem': imagem})
