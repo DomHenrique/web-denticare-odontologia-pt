@@ -1,4 +1,10 @@
 db.sqlite3
 __pycache__
 GEMINI.MD
+.env
+staticfiles/
+media/
+*.html
+# Mas permitir HTMLs dentro das pastas de templates do Django
+!web-denticare-odontologia/**/templates/**/*.html
 

@@ -1,73 +1,321 @@
-{% extends "Inicio/base.html" %}
-
 {% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
 
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>DentiCare - {{ producto.nome }}</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&amp;display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#0099e6",
+                        "background-light": "#f0f9ff",
+                        "background-dark": "#111827",
+                        "card-light": "#ffffff",
+                        "card-dark": "#1f2937",
+                        "text-light": "#334155",
+                        "text-dark": "#e2e8f0",
+                    },
+                    fontFamily: {
+                        display: ["Poppins", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.5rem",
+                    },
+                },
+            },
+        };
+    </script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+    </style>
+</head>
 
-{% block content%}
-<!--Informacoes ou detalhes do produto-->
-<section class="product-detail py-5" style="background-color: #ecf0f1;">
-    <div class="container">
-        <div class="row">
-            <!-- Product Gallery -->
-            <div class="col-md-6">
-                <div class="d-flex gap-4">
-                    <!-- Main Image -->
-                    <div class="main-image position-relative">
-                        <img src="{{producto.imagem_producto.url}}" alt="{{producto.nome}}"
-                            class="img-fluid rounded" style="max-width: 400px;">
-                    </div>
+<body
+    class="bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark transition-colors duration-300">
+    <nav class="sticky top-0 z-50 bg-white dark:bg-card-dark shadow-sm border-b border-gray-100 dark:border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <div class="flex-shrink-0 flex items-center gap-2 cursor-pointer" onclick="window.location.href='/'">
+                    <span class="material-icons text-primary text-3xl">medical_services</span>
+                    <span class="font-bold text-2xl text-primary tracking-tight">DentiCare</span>
                 </div>
-            </div>
-
-            <!-- Product Info -->
-            <div class="col-md-6">
-                <div class="product-info">
-                    <!-- Product Title -->
-                    <h1 class="display-6 fw-bold mb-3">{{producto.nome}}</h1>
-
-                    <!-- Product Details -->
-                    <div class="mb-3">
-                        <p class="mb-1 text-muted">SKU: {{producto.sku}}</p>
-                        <p class="mb-3">Categoria: <a href="#" class="text-decoration-none">{{producto.categorias.nome}}</a></p>
-                    </div>
-
-                    <!-- Price -->
-                    <div class="mb-4">
-                        <span class="text-decoration-line-through text-muted me-2"></span>
-                        <span class="fs-2 fw-bold" style="color: #7161ef;">R$ {{producto.preco}}</span>
-                    </div>
-                    <!-- Add to Cart Button -->
-                    <a href="{% url 'carrinho:adicionar' producto.id %}">
-                        <button class="btn btn-primary mb-4 px-4 py-2" style="border-radius: 25px;">
-                            Adicionar ao Carrinho
+                <div class="hidden md:flex flex-1 max-w-lg mx-8">
+                    <form action="{% url 'produtos' %}" method="POST" class="relative w-full">
+                        {% csrf_token %}
+                        <input
+                            class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-full py-2 pl-4 pr-10 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-sm dark:text-white transition-all"
+                            placeholder="Buscar produtos..." type="text" name="prod" />
+                        <button type="submit" class="absolute right-0 top-0 mt-2 mr-3 text-gray-400 hover:text-primary">
+                            <span class="material-icons">search</span>
                         </button>
+                    </form>
+                </div>
+                <div class="flex items-center space-x-6">
+                    <a class="hidden lg:block text-gray-600 dark:text-gray-300 hover:text-primary font-medium transition-colors"
+                        href="{% url 'produtos' %}">Produtos</a>
+                    <a class="hidden lg:block text-gray-600 dark:text-gray-300 hover:text-primary font-medium transition-colors"
+                        href="{% url 'Agendamento:index' %}">Agendamento</a>
+                    <a class="hidden sm:inline-flex items-center justify-center px-5 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-primary hover:bg-blue-600 shadow-md transition-all transform hover:scale-105"
+                        href="{% url 'contato' %}">
+                        Contate-nos
                     </a>
-
-                    <!-- Product Specifications -->
-                    <div class="specifications">
-                        <div class="row mb-2">
-                            <div class="col-3 fw-bold">Marca:</div>
-                            <div class="col">{{producto.marca}}</div>
-                        </div>
-                        <div class="row mb-2">
-                            <div class="col-3 fw-bold">Apresentacao:</div>
-                            <div class="col">{{producto.apresentacao}}</div>
-                        </div>
-                        <div class="row mb-4">
-                            <div class="col-3 fw-bold">Codigo Interno:</div>
-                            <div class="col">
-                                {{producto.codigo_interno}}
-                            </div>
-                        </div>
+                    <div class="relative cursor-pointer group" onclick="window.location.href='{% url 'carro' %}'">
+                        <span
+                            class="material-icons text-gray-600 dark:text-gray-300 group-hover:text-primary transition-colors">shopping_cart</span>
+                        <span
+                            class="absolute -top-2 -right-2 bg-primary text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center border-2 border-white dark:border-card-dark">
+                            {{ request.session.carro.items|length|default:0 }}
+                        </span>
                     </div>
-
-                    <!-- Product Description -->
-                    <p class="text-muted">
-                        {{producto.descricao}}
-                    </p>
+                    {% if user.is_authenticated %}
+                    <div class="hidden md:flex items-center space-x-2 text-sm">
+                        <span class="text-primary font-medium truncate max-w-[150px]">{{ user.username }}</span>
+                        <a class="text-gray-500 hover:text-red-500 font-medium ml-2" href="{% url 'logout' %}">Sair</a>
+                    </div>
+                    {% else %}
+                    <div class="hidden md:flex items-center space-x-2 text-sm">
+                        <a class="text-primary font-medium hover:text-secondary" href="{% url 'login' %}">Entrar</a>
+                    </div>
+                    {% endif %}
+                    <div class="md:hidden flex items-center">
+                        <button id="mobile-menu-button"
+                            class="text-gray-600 dark:text-gray-300 hover:text-primary focus:outline-none">
+                            <span class="material-icons">menu</span>
+                        </button>
+                    </div>
                 </div>
             </div>
+            <!-- Mobile Menu -->
+            <div id="mobile-menu"
+                class="hidden md:hidden bg-white dark:bg-card-dark border-b border-gray-100 dark:border-gray-800 transition-all duration-300">
+                <div class="px-4 pt-2 pb-6 space-y-2">
+                    <a class="block px-3 py-2 text-base font-medium text-gray-600 dark:text-gray-300 hover:text-primary hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg"
+                        href="{% url 'inicio' %}">Início</a>
+                    <a class="block px-3 py-2 text-base font-medium text-gray-600 dark:text-gray-300 hover:text-primary hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg"
+                        href="{% url 'produtos' %}">Produtos</a>
+                    <a class="block px-3 py-2 text-base font-medium text-gray-600 dark:text-gray-300 hover:text-primary hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg"
+                        href="{% url 'Agendamento:index' %}">Agendamento</a>
+                    <a class="block px-3 py-2 text-base font-medium text-primary hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg"
+                        href="{% url 'contato' %}">Contate-nos</a>
+                    {% if user.is_authenticated %}
+                    <div class="pt-4 border-t border-gray-100 dark:border-gray-700">
+                        <span class="block px-3 py-2 text-xs font-bold text-gray-400 uppercase">Usuário</span>
+                        <span class="block px-3 py-2 text-sm font-medium text-primary">{{ user.username }}</span>
+                        <a class="block px-3 py-2 text-sm font-medium text-red-500 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg"
+                            href="{% url 'logout' %}">Sair</a>
+                    </div>
+                    {% else %}
+                    <a class="block px-3 py-2 text-base font-medium text-primary hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg"
+                        href="{% url 'login' %}">Entrar</a>
+                    {% endif %}
+                </div>
+            </div>
+    </nav>
+
+    <script>
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+        </script>
+
+    {% if db_error %}
+    <div class="max-w-7xl mx-auto px-4 py-12">
+        <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-8 text-center">
+            <span class="material-icons text-red-500 text-5xl mb-4">error_outline</span>
+            <h2 class="text-xl font-bold text-red-700 dark:text-red-400">Erro de Conexão</h2>
+            <p class="text-red-600 dark:text-red-300 mt-2">Não foi possível carregar os detalhes do produto no momento.</p>
+            <a href="{% url 'produtos' %}" class="mt-4 inline-block text-primary font-bold hover:underline">Voltar para
+                produtos</a>
         </div>
     </div>
-</section>
-{% endblock %}
+    {% elif not producto %}
+    <div class="max-w-7xl mx-auto px-4 py-12">
+        <div
+            class="bg-white dark:bg-card-dark border border-gray-100 dark:border-gray-800 rounded-xl p-12 text-center shadow-sm">
+            <span class="material-icons text-gray-300 text-6xl mb-4">inventory_2</span>
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Produto não encontrado</h2>
+            <p class="text-gray-600 dark:text-gray-400 mt-2">O produto solicitado não está disponível ou não existe.</p>
+            <a href="{% url 'produtos' %}" class="mt-6 inline-flex items-center text-primary font-semibold hover:underline">
+                Voltar para a loja
+                <span class="material-icons text-base ml-1">arrow_forward</span>
+            </a>
+        </div>
+        </div>
+    {% else %}
+    <main class="py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Breadcrumbs -->
+            <nav class="flex mb-8 text-sm text-gray-500 dark:text-gray-400" aria-label="Breadcrumb">
+                <ol class="flex items-center space-x-2">
+                    <li><a href="/" class="hover:text-primary">Home</a></li>
+                    <li><span class="material-icons text-xs">chevron_right</span></li>
+                    <li><a href="{% url 'produtos' %}" class="hover:text-primary">Produtos</a></li>
+                    <li><span class="material-icons text-xs">chevron_right</span></li>
+                    <li class="font-semibold text-gray-900 dark:text-white">{{ producto.nome }}</li>
+                </ol>
+            </nav>
+    
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+                <!-- Product Image Gallery (Simplified) -->
+                <div class="bg-white dark:bg-card-dark rounded-3xl p-8 shadow-lg border border-gray-100 dark:border-gray-800">
+                    <div
+                        class="aspect-square relative flex items-center justify-center bg-gray-50 dark:bg-gray-800/50 rounded-2xl overflow-hidden group">
+                        {% if producto.imagem_produto %}
+                        <img src="{{ producto.imagem_produto.url }}" alt="{{ producto.nome }}"
+                            class="object-contain w-full h-full max-h-[500px] transform group-hover:scale-105 transition-transform duration-500">
+                        {% else %}
+                        <span class="material-icons text-9xl text-gray-200 dark:text-gray-700">inventory_2</span>
+                        {% endif %}
+                        <div class="absolute top-6 left-6">
+                            <span
+                                class="bg-primary/10 text-primary text-xs font-bold px-4 py-1.5 rounded-full border border-primary/20 backdrop-blur-sm">
+                                {{ producto.categorias.nome }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product Details -->
+                <div class="flex flex-col">
+                    <div class="inline-flex items-center space-x-2 mb-4">
+                        <span
+                            class="px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-xs font-bold rounded-full">
+                            {% if producto.disponibilidade %}Em Estoque{% else %}Sob Encomenda{% endif %}
+                        </span>
+                        <span class="text-xs text-gray-400 dark:text-gray-500">Marca: {{ producto.marca }}</span>
+                        <span class="text-xs text-gray-400 dark:text-gray-500">| SKU: {{ producto.sku }}</span>
+                    </div>
+                
+                    <h1 class="text-4xl font-extrabold text-gray-900 dark:text-white mb-6 leading-tight">
+                        {{ producto.nome }}
+                    </h1>
+                    
+                    <div class="flex items-center space-x-4 mb-8">
+                        <div class="text-4xl font-bold text-primary">R$ {{ producto.preco }}</div>
+                        <div class="text-sm text-gray-500 dark:text-gray-400">Ou em até 10x s/ juros</div>
+                    </div>
+                <div class="bg-white dark:bg-card-dark rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-800 mb-8">
+                    <p class="text-gray-600 dark:text-gray-400 leading-relaxed">
+                        {{ producto.descricao }}
+                    </p>
+                </div>
+                
+                <!-- Specifications Table -->
+                <div class="mb-8">
+                    <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4">Especificações</h3>
+                    <div class="grid grid-cols-2 gap-4 text-sm">
+                        <div class="flex justify-between border-b dark:border-gray-800 pb-2">
+                            <span class="text-gray-500">Apresentação</span>
+                            <span class="font-medium text-gray-900 dark:text-white">{{ producto.apresentacao }}</span>
+                        </div>
+                        <div class="flex justify-between border-b dark:border-gray-800 pb-2">
+                            <span class="text-gray-500">Cód. Interno</span>
+                            <span class="font-medium text-gray-900 dark:text-white">{{ producto.codigo_interno }}</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Actions -->
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <a href="{% url 'carrinho:adicionar' producto.id %}"
+                        class="flex-1 inline-flex items-center justify-center px-8 py-4 bg-primary text-white font-bold rounded-2xl hover:bg-blue-600 shadow-xl shadow-blue-500/20 transition-all transform active:scale-95">
+                        <span class="material-icons mr-2">shopping_bag</span>
+                            Adicionar ao Carrinho
+                        </a>
+                        <button
+                            class="px-6 py-4 bg-gray-50 dark:bg-gray-800 text-gray-400 hover:text-red-500 border border-gray-200 dark:border-gray-700 rounded-2xl transition-all">
+                            <span class="material-icons">favorite_border</span>
+                        </button>
+                    </div>
+
+                    <!-- Trust Badges -->
+                    <div class="mt-8 grid grid-cols-3 gap-4">
+                        <div class="flex flex-col items-center text-center p-4 bg-gray-50 dark:bg-gray-800/30 rounded-xl">
+                            <span class="material-icons text-primary mb-2">local_shipping</span>
+                            <span class="text-[10px] font-bold text-gray-500 uppercase">Entrega Rápida</span>
+                        </div>
+                        <div class="flex flex-col items-center text-center p-4 bg-gray-50 dark:bg-gray-800/30 rounded-xl">
+                            <span class="material-icons text-primary mb-2">security</span>
+                            <span class="text-[10px] font-bold text-gray-500 uppercase">Compra Segura</span>
+                        </div>
+                        <div class="flex flex-col items-center text-center p-4 bg-gray-50 dark:bg-gray-800/30 rounded-xl">
+                            <span class="material-icons text-primary mb-2">verified</span>
+                            <span class="text-[10px] font-bold text-gray-500 uppercase">Original</span>
+                        </div>
+                        </div>
+                        </div>
+            </div>
+            </div>
+            </main>
+            {% endif %}
+
+    <footer class="bg-gray-50 dark:bg-background-dark border-t border-gray-200 dark:border-gray-700 pt-16 pb-8 mt-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+                <div class="col-span-1 md:col-span-1">
+                    <div class="flex items-center gap-2 mb-4">
+                        <span class="material-icons text-primary text-2xl">medical_services</span>
+                        <span class="font-bold text-xl text-primary">DentiCare</span>
+                    </div>
+                    <p class="text-gray-500 dark:text-gray-400 text-sm">
+                        Excelência em odontologia para você e sua família.
+                    </p>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-gray-900 dark:text-white mb-4">Links Rápidos</h4>
+                    <ul class="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+                        <li><a class="hover:text-primary" href="/">Home</a></li>
+                        <li><a class="hover:text-primary" href="{% url 'produtos' %}">Produtos</a></li>
+                        <li><a class="hover:text-primary" href="{% url 'servicos' %}">Serviços</a></li>
+                        <li><a class="hover:text-primary" href="{% url 'contato' %}">contato</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-gray-900 dark:text-white mb-4">Suporte</h4>
+                    <ul class="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+                        <li><a class="hover:text-primary" href="#">Política de Privacidade</a></li>
+                        <li><a class="hover:text-primary" href="#">Termos de Uso</a></li>
+                    </ul>
+                </div>
+                {% if unidades.0 %}
+                <div>
+                    <h4 class="font-semibold text-gray-900 dark:text-white mb-4">contato ({{ unidades.0.nome }})</h4>
+                    <ul class="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+                        <li class="flex items-center gap-2"><span class="material-icons text-xs">email</span>
+                            {{ unidades.0.email }}</li>
+                        <li class="flex items-center gap-2"><span class="material-icons text-xs">phone</span> {{ unidades.0.telefone }}
+                        </li>
+                        <li class="flex items-center gap-2"><span class="material-icons text-xs">place</span> {{ unidades.0.endereco }}
+                        </li>
+                    </ul>
+                </div>
+                {% endif %}
+            </div>
+            <div class="border-t border-gray-200 dark:border-gray-700 pt-8 flex flex-col md:flex-row justify-between items-center">
+                <p class="text-sm text-gray-500 dark:text-gray-400">© 2024 DentiCare. Todos os direitos reservados.</p>
+            </div>
+            </div>
+    </footer>
+    
+    {% if unidades.0 %}
+    <a class="fixed bottom-6 right-6 z-50 bg-green-500 hover:bg-green-600 text-white rounded-full p-4 shadow-lg transition-transform hover:scale-110 flex items-center justify-center"
+        href="https://wa.me/{{ unidades.0.whatsapp|cut:' '|cut:'-'|cut:'('|cut:')' }}" target="_blank">
+        <span class="material-icons">whatsapp</span>
+    </a>
+    {% endif %}
+    </body>
+    
+    </html>

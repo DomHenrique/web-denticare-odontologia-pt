@@ -1,119 +1,271 @@
-{% extends "Inicio/base.html" %}
-
 {% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
 
-<!--Contendo-->
-{% block content%}
-<!-- Banner -->
-<div class="banner position-relative mb-5">
-    <img src="{% static 'Inicio/img/porta_preview_rev_1.png' %}" alt="Dental treatment background" class="w-100"
-        style="height: 150px; object-fit: cover;">
-    <div class="overlay position-absolute top-0 start-0 w-100 h-100"
-        style="background: linear-gradient(90deg, #0088cc 0%, rgba(0,136,204,0.5) 100%);">
-    </div>
-    <div class="position-absolute start-0 bottom-0 p-4">
-        <h1 class="display-4 text-white fw-bold mb-0" style="color: #f8f9fa;">Produtos</h1>
-    </div>
-</div>
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>DentiCare - Produtos</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&amp;display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#0099e6",
+                        "background-light": "#f0f9ff",
+                        "background-dark": "#111827",
+                        "card-light": "#ffffff",
+                        "card-dark": "#1f2937",
+                        "text-light": "#334155",
+                        "text-dark": "#e2e8f0",
+                    },
+                    fontFamily: {
+                        display: ["Poppins", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.5rem",
+                    },
+                },
+            },
+        };
+    </script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+    </style>
+</head>
 
-<!-- Products Grid -->
-<div class="productos-grid">
-    <div class="container pb-5">
-        <div class="row g-4">
-            <!-- Product Card 1 -->
-{# 
-            <div class="col-md-6">
-                <div class="card border-0 rounded-4 shadow h-100">
-                    <div class="card-body p-4">
-                        <div class="row">
-                            <div class="col-5">
-                                <img src="{}" alt="Cadena de Poder" class="img-fluid mb-3 mb-md-0"
-                                    style="max-height: 150px; object-fit: contain;">
-                            </div>
-                            <div class="col-7">
-                                <h3 class="h5 mb-3">Corrente de Poder</h3>
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <button
-                                        class="btn btn-light rounded-pill d-flex align-items-center gap-2 py-1 px-3">
-                                        <i class="bi bi-plus"></i>
-                                        Carrinho
-                                        <i class="bi bi-cart"></i>
-                                    </button>
-                                    <span class="price fw-bold h5 mb-0">R$ 15.00</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+<body
+    class="bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark transition-colors duration-300">
+    <nav class="sticky top-0 z-50 bg-white dark:bg-card-dark shadow-sm border-b border-gray-100 dark:border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <div class="flex-shrink-0 flex items-center gap-2 cursor-pointer" onclick="window.location.href='/'">
+                    <span class="material-icons text-primary text-3xl">medical_services</span>
+                    <span class="font-bold text-2xl text-primary tracking-tight">DentiCare</span>
                 </div>
-            </div>
-#}
-            <!-- Product Card 2 -->
-{#
-            <div class="col-md-6">
-                <div class="card border-0 rounded-4 shadow h-100">
-                    <div class="card-body p-4">
-                        <div class="row">
-                            <div class="col-5">
-                                <img src="/placeholder.svg" alt="Braquetes Ortodonticos" class="img-fluid mb-3 mb-md-0"
-                                    style="max-height: 150px; object-fit: contain;">
-                            </div>
-                            <div class="col-7">
-                                <p class="text-purple mb-1 small">Braquetes</p>
-                                <h3 class="h5 mb-3">Braquetes Ortodonticos - ...</h3>
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <button
-                                        class="btn btn-light rounded-pill d-flex align-items-center gap-2 py-1 px-3">
-                                        <i class="bi bi-plus"></i>
-                                        Carrinho
-                                        <i class="bi bi-cart"></i>
-                                    </button>
-                                    <span class="price fw-bold h5 mb-0" style="color: #000080;">R$ 13.00</span>
-                                </div>
-                            </div>
-                        </div>
+<div class="hidden md:flex flex-1 max-w-lg mx-8">
+    <form action="{% url 'produtos' %}" method="POST" class="relative w-full">
+        {% csrf_token %}
+        <input
+            class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-full py-2 pl-4 pr-10 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-sm dark:text-white transition-all"
+            placeholder="Buscar produtos..." type="text" name="prod" value="{{ query|default:'' }}" />
+        <button type="submit" class="absolute right-0 top-0 mt-2 mr-3 text-gray-400 hover:text-primary">
+            <span class="material-icons">search</span>
+        </button>
+    </form>
+    </div>
+<div class="flex items-center space-x-6">
+    <a class="hidden lg:block text-gray-600 dark:text-gray-300 hover:text-primary font-medium transition-colors"
+        href="{% url 'produtos' %}">Produtos</a>
+    <a class="hidden lg:block text-gray-600 dark:text-gray-300 hover:text-primary font-medium transition-colors"
+        href="{% url 'Agendamento:index' %}">Agendamento</a>
+    <a class="hidden sm:inline-flex items-center justify-center px-5 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-primary hover:bg-blue-600 shadow-md transition-all transform hover:scale-105"
+        href="{% url 'contato' %}">
+        Contate-nos
+    </a>
+    <div class="relative cursor-pointer group" onclick="window.location.href='{% url 'carro' %}'">
+        <span
+            class="material-icons text-gray-600 dark:text-gray-300 group-hover:text-primary transition-colors">shopping_cart</span>
+        <span
+            class="absolute -top-2 -right-2 bg-primary text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center border-2 border-white dark:border-card-dark">
+            {{ request.session.carro.items|length|default:0 }}
+        </span>
+    </div>
+                    {% if user.is_authenticated %}
+                    <div class="hidden md:flex items-center space-x-2 text-sm">
+                        <span class="text-primary font-medium truncate max-w-[150px]">{{ user.username }}</span>
+                        <a class="text-gray-500 hover:text-red-500 font-medium ml-2" href="{% url 'logout' %}">Sair</a>
                     </div>
-                </div>
-            </div>
-#}
-        </div>
-    </div> 
-   
-
-
-    <!-- Products Grid Section -->
-    {% if productos %}
-    <div class="container">
-        <div class="row g-4">
-            <!-- Product 1 -->
-            {% for producto in productos %}
-                <div class="col-md-6 col-lg-3">
-                    <div class="card h-100 border-0 rounded-4 shadow position-relative">
-                        <button class="btn position-absolute top-0 end-0 m-3 p-0">
-                            <i class="bi bi-heart-fill" style="color: #0088cc; font-size: 1.5rem;"></i>
+                    {% else %}
+                    <div class="hidden md:flex items-center space-x-2 text-sm">
+                        <a class="text-primary font-medium hover:text-secondary" href="{% url 'login' %}">Entrar</a>
+                    </div>
+                    {% endif %}
+                    <div class="md:hidden flex items-center">
+                        <button id="mobile-menu-button" class="text-gray-600 dark:text-gray-300 hover:text-primary focus:outline-none">
+                            <span class="material-icons">menu</span>
                         </button>
-                        <div class="card-body p-4">
-                            <img src="{{ producto.imagen_producto.url }}" alt="Retractor Lateral" class="img-fluid mb-3">
-                            <h5 class="product-title h6 mb-3">{{producto.nome}}</h5>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <a href="{% url 'carrinho:adicionar' producto.id %}">
-                                    <button class="btn btn-light rounded-pill d-flex align-items-center gap-2 py-1 px-3">
-                                        <i class="bi bi-plus"></i>
-                                        Carrinho
-                                        <i class="bi bi-cart"></i>
-                                    </button>
-                                </a>
-                                <span class="price fw-bold" style="color: #0088cc;">{{producto.preco}}</span>
-                            </div>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu"
+            class="hidden md:hidden bg-white dark:bg-card-dark border-b border-gray-100 dark:border-gray-800 transition-all duration-300">
+            <div class="px-4 pt-2 pb-6 space-y-2">
+                <a class="block px-3 py-2 text-base font-medium text-gray-600 dark:text-gray-300 hover:text-primary hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg"
+                    href="{% url 'inicio' %}">Início</a>
+                <a class="block px-3 py-2 text-base font-medium text-gray-600 dark:text-gray-300 hover:text-primary hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg"
+                    href="{% url 'produtos' %}">Produtos</a>
+                <a class="block px-3 py-2 text-base font-medium text-gray-600 dark:text-gray-300 hover:text-primary hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg"
+                    href="{% url 'Agendamento:index' %}">Agendamento</a>
+                <a class="block px-3 py-2 text-base font-medium text-primary hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg"
+                    href="{% url 'contato' %}">Contate-nos</a>
+                {% if user.is_authenticated %}
+                <div class="pt-4 border-t border-gray-100 dark:border-gray-700">
+                    <span class="block px-3 py-2 text-xs font-bold text-gray-400 uppercase">Usuário</span>
+                    <span class="block px-3 py-2 text-sm font-medium text-primary">{{ user.username }}</span>
+                    <a class="block px-3 py-2 text-sm font-medium text-red-500 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg"
+                        href="{% url 'logout' %}">Sair</a>
+                </div>
+                {% else %}
+                <a class="block px-3 py-2 text-base font-medium text-primary hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg"
+                    href="{% url 'login' %}">Entrar</a>
+                {% endif %}
+            </div>
+            </div>
+    </nav>
+    
+    <script>
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+    
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hi');
+            });
+    </script>
+    
+    <!-- Page Header -->
+    <header class="bg-white dark:bg-card-dark py-12 border-b border-gray-100 dark:border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h1 class="text-3xl font-extrabold text-gray-900 dark:text-white">Nossos Produtos</h1>
+            <p class="mt-2 text-lg text-gray-600 dark:text-gray-400">Qualidade e tecnologia para sua saúde bucal.</p>
+        </div>
+    </header>
+    
+    <!-- Content Section -->
+    <main class="py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            {% if db_error %}
+            <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-8 text-center">
+                <span class="material-icons text-red-500 text-5xl mb-4">error_outline</span>
+                <h2 class="text-xl font-bold text-red-700 dark:text-red-400">Erro de Conexão</h2>
+                <p class="text-red-600 dark:text-red-300 mt-2">Não foi possível carregar os produtos no momento. Por favor,
+                    tente novamente mais tarde.</p>
+            </div>
+            {% elif not productos %}
+            <div
+                class="bg-white dark:bg-card-dark border border-gray-100 dark:border-gray-800 rounded-xl p-12 text-center shadow-sm">
+                <span class="material-icons text-gray-300 text-6xl mb-4">search_off</span>
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Nenhum produto encontrado</h2>
+                <p class="text-gray-600 dark:text-gray-400 mt-2">Tente buscar por termos diferentes ou navegue por nossas
+                    categorias.</p>
+                <a href="{% url 'produtos' %}" class="mt-6 inline-flex items-center text-primary font-semibold hover:underline">
+                    Ver todos os produtos
+                    <span class="material-icons text-base ml-1">arrow_forward</span>
+                </a>
+            </div>
+            {% else %}
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                {% for producto in productos %}
+                <div
+                    class="group bg-white dark:bg-card-dark rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 dark:border-gray-800 flex flex-col h-full">
+                    <div class="relative h-64 bg-gray-50 dark:bg-gray-800/50 p-6 flex items-center justify-center overflow-hidden">
+                        {% if producto.imagem_produto %}
+                        <img src="{{ producto.imagem_produto.url }}" alt="{{ producto.nome }}"
+                            class="object-contain h-full w-full group-hover:scale-110 transition-transform duration-500">
+                        {% else %}
+                        <span class="material-icons text-7xl text-gray-200 dark:text-gray-700">inventory_2</span>
+                        {% endif %}
+                        <div class="absolute top-4 right-4">
+                            <span
+                                class="bg-white/90 dark:bg-card-dark/90 backdrop-blur-sm text-xs font-bold px-3 py-1 rounded-full shadow-sm text-primary">
+                                {{ producto.categorias.nome }}
+                            </span>
                         </div>
                     </div>
+                    <div class="p-6 flex flex-col flex-grow">
+                        <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2 line-clamp-1 hover:text-primary transition-colors">
+                            <a href="{% url 'infoprod' producto.id %}">{{ producto.nome }}</a>
+                        </h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mb-4 line-clamp-2">{{ producto.descricao }}</p>
+                        <div class="mt-auto">
+                            <div class="flex items-center justify-between mb-4">
+                                <span class="text-2xl font-bold text-primary">R$ {{ producto.preco }}</span>
+                                <span class="text-xs text-gray-400 dark:text-gray-500">Marca: {{ producto.marca }}</span>
+                            </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <a href="{% url 'infoprod' producto.id %}"
+                                    class="flex items-center justify-center px-4 py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 text-sm font-bold rounded-xl hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+                                    Detalhes
+                                </a>
+                                <a href="{% url 'carrinho:adicionar' producto.id %}"
+                                    class="flex items-center justify-center px-4 py-2 bg-primary text-white text-sm font-bold rounded-xl hover:bg-blue-600 shadow-md shadow-blue-500/20 transition-all transform active:scale-95">
+                                    <span class="material-icons text-sm mr-1">add_shopping_cart</span>
+                                    Comprar
+                                </a>
+                            </div>
+                            </div>
+                            </div>
+                            </div>
+                            {% endfor %}
+                            </div>
+            {% endif %}
+            </div>
+            </main>
+            
+            <footer class="bg-gray-50 dark:bg-background-dark border-t border-gray-200 dark:border-gray-700 pt-16 pb-8 mt-12">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+                        <div class="col-span-1 md:col-span-1">
+                            <div class="flex items-center gap-2 mb-4">
+                                <span class="material-icons text-primary text-2xl">medical_services</span>
+                                <span class="font-bold text-xl text-primary">DentiCare</span>
+                            </div>
+                            <p class="text-gray-500 dark:text-gray-400 text-sm">
+                                Excelência em odontologia para você e sua família.
+                            </p>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-gray-900 dark:text-white mb-4">Links Rápidos</h4>
+                            <ul class="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+                                <li><a class="hover:text-primary" href="/">Home</a></li>
+                                <li><a class="hover:text-primary" href="{% url 'produtos' %}">Produtos</a></li>
+                                <li><a class="hover:text-primary" href="{% url 'servicos' %}">Serviços</a></li>
+                                <li><a class="hover:text-primary" href="{% url 'contato' %}">contato</a></li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-gray-900 dark:text-white mb-4">Suporte</h4>
+                            <ul class="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+                                <li><a class="hover:text-primary" href="#">Política de Privacidade</a></li>
+                                <li><a class="hover:text-primary" href="#">Termos de Uso</a></li>
+                            </ul>
+                        </div>
+                        {% if unidades.0 %}
+                        <div>
+                            <h4 class="font-semibold text-gray-900 dark:text-white mb-4">contato ({{ unidades.0.nome }})</h4>
+                            <ul class="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+                                <li class="flex items-center gap-2"><span class="material-icons text-xs">email</span>
+                                    {{ unidades.0.email }}</li>
+                                <li class="flex items-center gap-2"><span class="material-icons text-xs">phone</span> {{
+                                    unidades.0.telefone }}
+                                </li>
+                                <li class="flex items-center gap-2"><span class="material-icons text-xs">place</span> {{
+                                    unidades.0.endereco }}
+                                </li>
+                            </ul>
                 </div>
-            {% endfor %}
-        </div>
-    </div>
-    {% else %}
-    <h1>Resultados da busca</h1>
-    <h2>Nenhum produto encontrado</h2>
-    {% endif %}
-</div>
+                {% endif %}
+                </div>
+            <div class="border-t border-gray-200 dark:border-gray-700 pt-8 flex flex-col md:flex-row justify-between items-center">
+                <p class="text-sm text-gray-500 dark:text-gray-400">© 2024 DentiCare. Todos os direitos reservados.</p>
+            </div>
+            </div>
+            </footer>
+            
+            {% if unidades.0 %}
+            <a class="fixed bottom-6 right-6 z-50 bg-green-500 hover:bg-green-600 text-white rounded-full p-4 shadow-lg transition-transform hover:scale-110 flex items-center justify-center"
+                href="https://wa.me/{{ unidades.0.whatsapp|cut:' '|cut:'-'|cut:'('|cut:')' }}" target="_blank">
+                <span class="material-icons">whatsapp</span>
+            </a>
+            {% endif %}
+            </body>
 
-{% endblock %}
+</html>

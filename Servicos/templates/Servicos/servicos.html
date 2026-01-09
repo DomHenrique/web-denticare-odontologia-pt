@@ -1,8 +1,277 @@
-{% extends "Inicio/base.html" %}
-
 {% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
 
-{% block content%}
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>DentiCare - Nossos Serviços</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&amp;display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#0099e6",
+                        "background-light": "#f0f9ff",
+                        "background-dark": "#111827",
+                        "card-light": "#ffffff",
+                        "card-dark": "#1f2937",
+                        "text-light": "#334155",
+                        "text-dark": "#e2e8f0",
+                    },
+                    fontFamily: {
+                        display: ["Poppins", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.5rem",
+                    },
+                },
+            },
+        };
+    </script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+    </style>
+</head>
 
-{% endblock %}
+<body
+    class="bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark transition-colors duration-300">
+    <nav class="sticky top-0 z-50 bg-white dark:bg-card-dark shadow-sm border-b border-gray-100 dark:border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <div class="flex-shrink-0 flex items-center gap-2 cursor-pointer" onclick="window.location.href='/'">
+                    <span class="material-icons text-primary text-3xl">medical_services</span>
+                    <span class="font-bold text-2xl text-primary tracking-tight">DentiCare</span>
+                </div>
 
+                <div class="hidden md:flex flex-1 max-w-lg mx-8 text-center text-sm text-gray-500">
+                    Sua saúde bucal em primeiro lugar
+                </div>
+
+                <div class="flex items-center space-x-6">
+                    <a class="hidden lg:block text-gray-600 dark:text-gray-300 hover:text-primary font-medium transition-colors"
+                        href="{% url 'produtos' %}">Produtos</a>
+                    <a class="hidden lg:block text-gray-600 dark:text-gray-300 hover:text-primary font-medium transition-colors"
+                        href="{% url 'Agendamento:index' %}">Agendamento</a>
+                    <a class="hidden sm:inline-flex items-center justify-center px-5 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-primary hover:bg-blue-600 shadow-md transition-all transform hover:scale-105"
+                        href="{% url 'contato' %}">
+                        Contate-nos
+                    </a>
+                    <div class="relative cursor-pointer group" onclick="window.location.href='{% url 'produtos' %}'">
+                        <span
+                            class="material-icons text-gray-600 dark:text-gray-300 group-hover:text-primary transition-colors">shopping_cart</span>
+                        <span
+                            class="absolute -top-2 -right-2 bg-primary text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center border-2 border-white dark:border-card-dark">
+                            {{ total_produto|default:0 }}
+                        </span>
+                    </div>
+                    {% if user.is_authenticated %}
+                    <div class="hidden md:flex items-center space-x-2 text-sm">
+                        <span class="text-primary font-medium truncate max-w-[150px]">{{ user.username }}</span>
+                        <a class="text-gray-500 hover:text-red-500 font-medium ml-2" href="{% url 'logout' %}">Sair</a>
+                    </div>
+                    {% else %}
+                    <div class="hidden md:flex items-center space-x-2 text-sm">
+                        <a class="text-primary font-medium hover:text-secondary" href="{% url 'login' %}">Entrar</a>
+                    </div>
+                    {% endif %}
+                    <div class="md:hidden flex items-center">
+                        <button id="mobile-menu-button"
+                            class="text-gray-600 dark:text-gray-300 hover:text-primary focus:outline-none">
+                            <span class="material-icons">menu</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <!-- Mobile Menu -->
+            <div id="mobile-menu"
+                class="hidden md:hidden bg-white dark:bg-card-dark border-b border-gray-100 dark:border-gray-800 transition-all duration-300">
+                <div class="px-4 pt-2 pb-6 space-y-2">
+                    <a class="block px-3 py-2 text-base font-medium text-gray-600 dark:text-gray-300 hover:text-primary hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg"
+                        href="{% url 'inicio' %}">Início</a>
+                    <a class="block px-3 py-2 text-base font-medium text-gray-600 dark:text-gray-300 hover:text-primary hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg"
+                        href="{% url 'produtos' %}">Produtos</a>
+                    <a class="block px-3 py-2 text-base font-medium text-gray-600 dark:text-gray-300 hover:text-primary hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg"
+                        href="{% url 'Agendamento:index' %}">Agendamento</a>
+                    <a class="block px-3 py-2 text-base font-medium text-primary hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg"
+                        href="{% url 'contato' %}">Contate-nos</a>
+                    {% if user.is_authenticated %}
+                    <div class="pt-4 border-t border-gray-100 dark:border-gray-700">
+                        <span class="block px-3 py-2 text-xs font-bold text-gray-400 uppercase">Usuário</span>
+                        <span class="block px-3 py-2 text-sm font-medium text-primary">{{ user.username }}</span>
+                        <a class="block px-3 py-2 text-sm font-medium text-red-500 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg"
+                            href="{% url 'logout' %}">Sair</a>
+                    </div>
+                    {% else %}
+                    <a class="block px-3 py-2 text-base font-medium text-primary hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg"
+                        href="{% url 'login' %}">Entrar</a>
+                    {% endif %}
+                </div>
+            </div>
+    </nav>
+
+    <script>
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+    </script>
+
+    <!-- Services Section -->
+    <main class="py-20 bg-background-light dark:bg-background-dark">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h1 class="text-4xl font-extrabold text-primary mb-4">Nossos Serviços Especializados</h1>
+                <div class="w-32 h-1.5 bg-primary mx-auto rounded-full"></div>
+                <p class="mt-6 text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+                    Cuidado preventivo, estético e curativo com as tecnologias mais modernas da odontologia.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+                {% for servico in servicos %}
+                <div
+                    class="group bg-white dark:bg-card-dark rounded-3xl shadow-sm hover:shadow-2xl transition-all duration-500 overflow-hidden border border-gray-100 dark:border-gray-800 flex flex-col h-full transform hover:-translate-y-2">
+                    <div class="h-64 relative overflow-hidden">
+                        {% if servico.imagem %}
+                        <img alt="{{ servico.titulo }}"
+                            class="object-cover w-full h-full group-hover:scale-110 transition-transform duration-700"
+                            src="{{ servico.imagem.url }}" />
+                        {% else %}
+                        <div class="w-full h-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
+                            <span
+                                class="material-icons text-8xl text-gray-200 dark:text-gray-700">medical_services</span>
+                        </div>
+                        {% endif %}
+                        <div
+                            class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-8">
+                            <span class="text-white font-bold flex items-center">
+                                Saber mais
+                                <span class="material-icons ml-2">add</span>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="p-8 flex flex-col flex-grow">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div
+                                class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                                <span class="material-icons text-xl">verified</span>
+                            </div>
+                            <h3 class="text-2xl font-bold text-gray-900 dark:text-white leading-tight">
+                                {{ servico.titulo }}
+                            </h3>
+                        </div>
+                        <p class="text-gray-600 dark:text-gray-400 leading-relaxed mb-8 flex-grow">
+                            {{ servico.conteudo }}
+                        </p>
+                        <div class="mt-auto">
+                            <a href="{% url 'Agendamento:index' %}"
+                                class="inline-flex items-center justify-center w-full px-6 py-4 bg-primary text-white font-bold rounded-2xl hover:bg-blue-600 shadow-lg shadow-blue-500/20 transition-all transform active:scale-95 group/btn">
+                                Agendar Consulta
+                                <span
+                                    class="material-icons ml-2 group-hover/btn:translate-x-1 transition-transform">event</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div
+                    class="col-span-full py-20 text-center bg-white dark:bg-card-dark rounded-3xl border border-dashed border-gray-300 dark:border-gray-700">
+                    <span class="material-icons text-6xl text-gray-200 mb-4">info_outline</span>
+                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Nenhum serviço cadastrado</h2>
+                    <p class="text-gray-500 mt-2">Estamos trabalhando para trazer as melhores opções para você.</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-gray-50 dark:bg-background-dark border-t border-gray-200 dark:border-gray-700 pt-16 pb-8 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+                <div class="col-span-1 md:col-span-1">
+                    <div class="flex items-center gap-2 mb-6">
+                        <span class="material-icons text-primary text-3xl">medical_services</span>
+                        <span class="font-bold text-2xl text-primary tracking-tight">DentiCare</span>
+                    </div>
+                    <p class="text-gray-500 dark:text-gray-400 text-sm leading-relaxed">
+                        Referência em odontologia moderna, oferecendo tratamentos de alta complexidade com o máximo de
+                        conforto para nossos pacientes.
+                    </p>
+                </div>
+                <div>
+                    <h4 class="font-bold text-gray-900 dark:text-white mb-6 uppercase tracking-wider text-sm">Links Rápidos
+                    </h4>
+                    <ul class="space-y-4 text-sm text-gray-600 dark:text-gray-400">
+                        <li><a class="hover:text-primary transition-colors" href="/">Home</a></li>
+                        <li><a class="hover:text-primary transition-colors" href="{% url 'produtos' %}">Produtos</a></li>
+                        <li><a class="hover:text-primary transition-colors" href="{% url 'servicos' %}">Serviços</a></li>
+                        <li><a class="hover:text-primary transition-colors" href="{% url 'contato' %}">contato</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold text-gray-900 dark:text-white mb-6 uppercase tracking-wider text-sm">Atendimento
+                    </h4>
+                    <ul class="space-y-4 text-sm text-gray-600 dark:text-gray-400">
+                        <li><a class="hover:text-primary transition-colors" href="{% url 'Agendamento:index' %}">Agendar
+                                Consulta</a></li>
+                        <li><a class="hover:text-primary transition-colors" href="#">Política de Privacidade</a></li>
+                        <li><a class="hover:text-primary transition-colors" href="#">Trabalhe Conosco</a></li>
+                    </ul>
+                </div>
+                {% if unidades.0 %}
+                <div>
+                    <h4 class="font-bold text-gray-900 dark:text-white mb-6 uppercase tracking-wider text-sm">contatos ({{
+                        unidades.0.nome }})</h4>
+                    <ul class="space-y-4 text-sm text-gray-600 dark:text-gray-400">
+                        <li class="flex items-start gap-3">
+                            <span class="material-icons text-primary text-sm mt-0.5">email</span>
+                            <span>{{ unidades.0.email }}</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="material-icons text-primary text-sm mt-0.5">phone</span>
+                            <span>{{ unidades.0.telefone }}</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="material-icons text-primary text-sm mt-0.5">place</span>
+                            <span class="leading-relaxed">{{ unidades.0.endereco }}</span>
+                        </li>
+                    </ul>
+                </div>
+                {% endif %}
+            </div>
+            <div
+                class="border-t border-gray-200 dark:border-gray-700 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+                <p class="text-sm text-gray-500 dark:text-gray-400">© 2024 DentiCare Odontologia. Todos os direitos
+                    reservados.</p>
+                <div class="flex items-center gap-6">
+                    <a href="#" class="text-gray-400 hover:text-primary transition-colors"><span
+                            class="material-icons text-xl">facebook</span></a>
+                    <a href="#" class="text-gray-400 hover:text-primary transition-colors"><span
+                            class="material-icons text-xl">camera_alt</span></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    {% if unidades.0 %}
+    <a class="fixed bottom-8 right-8 z-50 bg-green-500 hover:bg-green-600 text-white rounded-full p-4 shadow-2xl transition-all transform hover:scale-110 active:scale-95 flex items-center justify-center group"
+        href="https://wa.me/{{ unidades.0.whatsapp|cut:' '|cut:'-'|cut:'('|cut:')' }}" target="_blank">
+        <span class="material-icons">whatsapp</span>
+        <span
+            class="max-w-0 overflow-hidden group-hover:max-w-xs group-hover:ml-2 transition-all duration-500 whitespace-nowrap font-bold">Fale
+            Conosco</span>
+    </a>
+    {% endif %}
+    </body>
+
+</html>

@@ -14,19 +14,19 @@ class Carrinho:
     def adicionar(self, produto):
         #Se produto nao esta no carrinho
         if(str(produto.id) not in self.carrinho.keys()):
-            self.carrinho[producto.id] = {
+            self.carrinho[produto.id] = {
                 "produto_id": produto.id,
                 "nome":produto.nome,
-                "preco": str(producto.preco),
+                "preco": str(produto.preco),
                 "quantidade": 1,
-                "imagem": produto.imagem_producto.url
+                "imagem": produto.imagem_produto.url
             }
         #Se o produto ja esta no carrinho
         else:
             for key, value in self.carrinho.items():
                 if key == str(produto.id):
                     value["quantidade"]=value["quantidade"]+1
-                    value["preco"]=float(value["preco"])+producto.preco
+                    value["preco"]=float(value["preco"])+produto.preco
                     break
         self.salvar_carrinho()
 
@@ -38,17 +38,17 @@ class Carrinho:
 
     #Eliminar um produto
     def remover(self, produto):
-        producto.id = str(producto.id)
+        produto.id = str(produto.id)
         if produto.id in self.carrinho:
-            del self.carrinho[producto.id]
+            del self.carrinho[produto.id]
             self.salvar_carrinho()
     
     #Subtrair unidades de um produto
     def subtrair_produto(self, produto):
         for key, value in self.carrinho.items():
-                if key == str(producto.id):
+                if key == str(produto.id):
                     value["quantidade"]=value["quantidade"]-1
-                    value["preco"]=float(value["preco"])-producto.preco
+                    value["preco"]=float(value["preco"])-produto.preco
                     #Eliminar se a quantidade for menor que 1
                     if  value['quantidade'] < 1:
                         self.remover(produto)

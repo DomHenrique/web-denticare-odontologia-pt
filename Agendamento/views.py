@@ -1,14 +1,31 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_protect
 from .models import Profissional, Disponibilidade, Agendamento
 from Servicos.models import Servico
+from Empresa.models import Unidade
 from datetime import datetime, timedelta, date
 import json
 
+from django.db import OperationalError
+
+@login_required
 def agendar(request):
-    servicos = Servico.objects.all()
-    return render(request, 'agendamento/index.html', {'servicos': servicos})
+    try:
+        servicos = Servico.objects.all()
+        unidades = Unidade.objects.all()
+    except OperationalError:
+        servicos = []
+        unidades = []
+    
+    context = {
+        'servicos': servicos,
+        'unidades': unidades,
+        'db_error': True if not servicos else False
+    }
+    return render(request, 'agendamento/index.html', context)
+
 
 def get_profissionais(request, servico_id):
     servico = get_object_or_404(Servico, id=servico_id)
@@ -67,21 +84,24 @@ def get_horarios(request):
         intervalo_inicio = datetime.combine(data_obj, disponibilidade.intervalo_inicio)
         intervalo_fim = datetime.combine(data_obj, disponibilidade.intervalo_fim)
 
+    # Otimização: Buscar todos os agendamentos ocupados em uma única consulta
+    agendamentos_ocupados = set(Agendamento.objects.filter(
+        profissional=profissional,
+        data=data_obj,
+        status__in=['confirmado', 'pendente']
+    ).values_list('horario', flat=True))
+
     while atual < fim:
+        agora_time = atual.time()
+        
         # Verificar si está en intervalo
-        in_break = false = False
+        in_break = False
         if intervalo_inicio and intervalo_fim:
             if intervalo_inicio <= atual < intervalo_fim:
                 in_break = True
         
-        # Verificar si ya está agendado
-        # TODO: Optimizar consulta
-        ocupado = Agendamento.objects.filter(
-            profissional=profissional,
-            data=data_obj,
-            horario=atual.time(),
-            status__in=['confirmado', 'pendente']
-        ).exists()
+        # Verificar si ya está agendado (usando o set em memória)
+        ocupado = agora_time in agendamentos_ocupados
 
         if not in_break and not ocupado:
             horarios.append(atual.strftime('%H:%M'))
@@ -90,7 +110,6 @@ def get_horarios(request):
         
     return JsonResponse(horarios, safe=False)
 
-@csrf_exempt
 def confirmar_agendamento(request):
     if request.method == 'POST':
         data = json.loads(request.body)

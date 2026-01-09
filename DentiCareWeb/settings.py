@@ -98,6 +98,7 @@ INSTALLED_APPS = [
     'Pedido',
 
     'Agendamento',
+    'Empresa',
 ]
 
 
@@ -119,8 +120,16 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
     'whitenoise.middleware.WhiteNoiseMiddleware',
-
 ]
+
+# Security Settings for Production
+if not DEBUG:
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    X_FRAME_OPTIONS = 'DENY'
 
 
 
@@ -236,7 +245,7 @@ LANGUAGE_CODE = 'pt-br'
 
 
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Sao_Paulo'
 
 
 
@@ -303,7 +312,7 @@ EMAIL_PORT = 587
 
 EMAIL_HOST_USER = "miguelpaucar987@gmail.com"
 
-EMAIL_HOST_PASSWORD = "ixtv hcox zdty ohys"
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
 
 
 
