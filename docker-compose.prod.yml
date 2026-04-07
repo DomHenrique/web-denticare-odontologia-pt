@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  dentcare:
+    image: domhenrique/dentcare:latest
+    container_name: dentcare-app
+    restart: always
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:8000/health/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - portainer_hnperf
+    
+    # Volumes para persistência de mídia local (se necessário)
+    volumes:
+      - media_data:/app/media
+
+    environment:
+      - TZ=America/Sao_Paulo
+      - DEBUG=False
+      - ALLOWED_HOSTS=dentcare.hnperformancedigital.com.br,localhost,127.0.0.1
+      
+      # Database Configuration (Supabase)
+      # Recomenda-se usar o Connection Pooler do Supabase (Porta 6543)
+      - DATABASE_URL=${DATABASE_URL}
+      
+      # Security
+      - SECRET_KEY=${SECRET_KEY}
+      
+      # Email
+      - EMAIL_HOST_USER=${EMAIL_HOST_USER}
+      - EMAIL_HOST_PASSWORD=${EMAIL_HOST_PASSWORD}
+      - CONTACT_EMAIL=${CONTACT_EMAIL}
+
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=portainer_hnperf"
+      - "traefik.http.routers.dentcare.rule=Host(`dentcare.hnperformancedigital.com.br`)"
+      - "traefik.http.routers.dentcare.entrypoints=websecure"
+      - "traefik.http.routers.dentcare.tls=true"
+      - "traefik.http.routers.dentcare.tls.certresolver=letsencryptresolver"
+      - "traefik.http.services.dentcare.loadbalancer.server.port=8000"
+      - "traefik.http.services.dentcare.loadbalancer.server.scheme=http"
+
+networks:
+  portainer_hnperf:
+    external: true
+
+volumes:
+  media_data:

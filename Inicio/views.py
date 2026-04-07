@@ -24,3 +24,6 @@ def ViewProd(request, id):
     preco = infoprod.preco
     imagem = infoprod.imagem_produto
     return render(request, 'Inicio/infoprod.html', {'infoprod': infoprod, 'nome': nome, 'preco': preco, 'imagem': imagem})
+
+def HealthCheck(request):
+    return HttpResponse("OK", status=200)
