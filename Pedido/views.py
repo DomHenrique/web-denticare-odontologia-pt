@@ -41,17 +41,19 @@ def processar_pedido(request):
 
     return redirect("../produtos")
 
+from django.conf import settings
+
 def enviar_email(**kwargs):
     assunto = "Novo pedido DentiCare - Obrigado"
-    mensagem= render_to_string("emails/pedido.html", {
+    mensagem = render_to_string("emails/pedido.html", {
         "pedido": kwargs.get("pedido"),
         "itens_pedido": kwargs.get("itens_pedido"),
-        "itens_texto": kwargs.get("itens_texto"),  # Y aquí también
-        "nomeusuario":kwargs.get("nomeusuario"),
+        "itens_texto": kwargs.get("itens_texto"),
+        "nomeusuario": kwargs.get("nomeusuario"),
     })
 
     mensagem_texto = strip_tags(mensagem)
-    from_email="miguelpaucar987@gmail.com"
-    to='mpaucarporras@gmail.com'
+    from_email = settings.EMAIL_HOST_USER
+    to = settings.CONTACT_EMAIL
 
     send_mail(assunto, mensagem_texto, from_email, [to], html_message=mensagem)

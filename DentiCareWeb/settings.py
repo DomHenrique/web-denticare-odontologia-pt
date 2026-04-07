@@ -42,24 +42,31 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 
-SECRET_KEY = os.environ.get('SECRET_KEY', default='your secret key')
-
-
+# Validar SECRET_KEY obrigatoriamente
+SECRET_KEY = os.environ.get('SECRET_KEY')
+if not SECRET_KEY:
+    raise ValueError(
+        "Variável de ambiente 'SECRET_KEY' não configurada! "
+        "Execute: export SECRET_KEY='sua-chave-aleatoria-aqui'"
+    )
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
-DEBUG = 'RENDER' not in os.environ
+# DEBUG deve ser False por padrão
+DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
 
-
-
-ALLOWED_HOSTS = []
-
-
+# ALLOWED_HOSTS obrigatório
+ALLOWED_HOSTS_STR = os.environ.get('ALLOWED_HOSTS')
+if not ALLOWED_HOSTS_STR and not DEBUG:
+    raise ValueError(
+        "Variável de ambiente 'ALLOWED_HOSTS' não configurada! "
+        "Execute: export ALLOWED_HOSTS='seusite.com,www.seusite.com'"
+    )
+ALLOWED_HOSTS = ALLOWED_HOSTS_STR.split(',') if ALLOWED_HOSTS_STR else ['localhost', '127.0.0.1']
 
 RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
 
 if RENDER_EXTERNAL_HOSTNAME:
-
     ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
 
 
@@ -151,15 +158,13 @@ TEMPLATES = [
 
             'context_processors': [
 
-                'django.template.context_processors.debug',
-
                 'django.template.context_processors.request',
 
                 'django.contrib.auth.context_processors.auth',
 
                 'django.contrib.messages.context_processors.messages',
 
-                'Carrinho.context_processor.valor_total_carrinho',  # App, arcchivo, nombre_función
+                'Carrinho.context_processor.valor_total_carrinho',  # App, arquivo, nome_função
 
             ],
 
@@ -310,7 +315,12 @@ EMAIL_USE_TLS = True
 
 EMAIL_PORT = 587
 
-EMAIL_HOST_USER = "miguelpaucar987@gmail.com"
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
+if not EMAIL_HOST_USER and not DEBUG:
+    raise ValueError("EMAIL_HOST_USER não configurado em produção!")
+
+# Adicionar novo email de contato
+CONTACT_EMAIL = os.environ.get('CONTACT_EMAIL', EMAIL_HOST_USER)
 
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
 

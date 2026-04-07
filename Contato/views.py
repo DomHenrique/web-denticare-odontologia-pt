@@ -22,7 +22,7 @@ def Contato(request):
         text_content = strip_tags(html_content)  # Versao texto plano do HTML
         
         email_from = settings.EMAIL_HOST_USER
-        recipient_list = ['mpaucarporras@gmail.com']
+        recipient_list = [settings.CONTACT_EMAIL]
         
         # Criar o email com conteudo alternativo (HTML e texto plano)
         email = EmailMultiAlternatives(
