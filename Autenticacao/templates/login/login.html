@@ -1,76 +1,174 @@
 {% extends "Inicio/base.html" %}
-
 {% load static %}
 
-{% block content%}
+{% block content %}
 <style>
-    .login-container {
-        background-color: #f0f0f0;
-        border-radius: 8px;
-        width: 300px;
-        padding: 20px;
-        margin: 110px auto 0;
-        margin-bottom: 20px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    :root {
+        --primary-accent: #00a0e6;
+        --bg-light: #f8fafc;
+        --card-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
     }
 
-    .login-form {
+    body {
+        font-family: 'Inter', sans-serif;
+        background-color: var(--bg-light);
+    }
+
+    .auth-wrapper {
+        min-height: calc(100vh - 200px);
         display: flex;
-        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 20px;
     }
 
-    .login-form h2 {
+    .auth-card {
+        background: #ffffff;
+        border-radius: 1.5rem;
+        box-shadow: var(--card-shadow);
+        width: 100%;
+        max-width: 420px;
+        padding: 2.5rem;
+        border: 1px solid rgba(0, 0, 0, 0.03);
+        transition: transform 0.3s ease;
+    }
+
+    .auth-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .auth-header {
         text-align: center;
-        margin-bottom: 20px;
+        margin-bottom: 2rem;
     }
 
-    .login-form .form-label {
-        margin-bottom: 5px;
+    .auth-header img {
+        height: 50px;
+        margin-bottom: 1rem;
     }
 
-    .login-form .form-control {
-        margin-bottom: 15px;
+    .auth-header h2 {
+        font-weight: 700;
+        color: #1e293b;
+        font-size: 1.75rem;
+        margin: 0;
     }
 
-    .login-form .btn-login {
-        background-color: #000;
+    .form-label {
+        font-weight: 500;
+        color: #475569;
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+    }
+
+    .input-group-text {
+        background: transparent;
+        border-right: none;
+        color: #94a3b8;
+    }
+
+    .form-control {
+        border-left: none;
+        padding: 0.75rem 1rem 0.75rem 0;
+        border-radius: 0.75rem;
+        font-size: 0.95rem;
+    }
+
+    .form-control:focus {
+        box-shadow: none;
+        border-color: #dee2e6;
+        background-color: #fff;
+    }
+
+    .input-group:focus-within .input-group-text,
+    .input-group:focus-within .form-control {
+        border-color: var(--primary-accent);
+        color: #1e293b;
+    }
+
+    .btn-auth {
+        background: linear-gradient(135deg, var(--primary-accent) 0%, #0088cc 100%);
+        border: none;
+        padding: 0.8rem;
+        border-radius: 0.75rem;
+        font-weight: 600;
         color: white;
+        margin-top: 1rem;
+        transition: all 0.3s ease;
     }
 
-    .login-form .link-registro {
+    .btn-auth:hover {
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 160, 230, 0.3);
+    }
+
+    .auth-footer {
         text-align: center;
-        margin-top: 15px;
+        margin-top: 1.5rem;
+        font-size: 0.9rem;
+        color: #64748b;
     }
 
-    .login-form .link-registro a {
-        color: blue;
+    .auth-footer a {
+        color: var(--primary-accent);
+        font-weight: 600;
         text-decoration: none;
     }
+
+    .auth-footer a:hover {
+        text-decoration: underline;
+    }
+
+    .alert {
+        border-radius: 0.75rem;
+        font-size: 0.85rem;
+        margin-top: 1rem;
+    }
 </style>
-<div class="login-container">
-    <form class="login-form" method="POST">
-        {% csrf_token %}
-        <h2>Fazer Login</h2>
 
-        <label for="username" class="form-label">Usuario</label>
-        <input type="text" id="username" name="username" class="form-control" required placeholder="User">
+<div class="auth-wrapper">
+    <div class="auth-card">
+        <div class="auth-header">
+            <img src="{% static 'Inicio/img/dientess.png' %}" alt="DentiCare">
+            <h2>Bem-vindo de volta</h2>
+            <p class="text-muted small mt-2">Acesse sua conta para continuar</p>
+        </div>
 
-        <label for="password" class="form-label">Senha</label>
-        <input type="password" id="password" name="password" class="form-control" required
-            placeholder="************************">
+        <form method="POST">
+            {% csrf_token %}
+            
+            <div class="mb-3">
+                <label for="username" class="form-label">Usuário</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-person"></i></span>
+                    <input type="text" id="username" name="username" class="form-control" required placeholder="Seu usuário">
+                </div>
+            </div>
 
-        <button type="submit" class="btn btn-login">Entrar</button>
+            <div class="mb-4">
+                <label for="password" class="form-label">Senha</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                    <input type="password" id="password" name="password" class="form-control" required placeholder="Sua senha">
+                </div>
+            </div>
 
-        {% if messages %}
-        {% for mensaje in messages %}
-        <div class="alert alert-{{ mensaje.tags }} mt-3">{{ mensaje }}</div>
-        {% endfor %}
-        {% endif %}
+            <button type="submit" class="btn btn-auth w-100">Entrar na Conta</button>
 
-        <p class="link-registro">
-            E a sua primeira vez? <a href="{% url 'autenticacao' %}">Cadastre-se</a>
-        </p>
-    </form>
+            {% if messages %}
+            {% for mensaje in messages %}
+            <div class="alert alert-{{ mensaje.tags }} d-flex align-items-center gap-2">
+                <i class="bi bi-exclamation-circle"></i>
+                {{ mensaje }}
+            </div>
+            {% endfor %}
+            {% endif %}
+
+            <div class="auth-footer">
+                Não tem uma conta? <a href="{% url 'autenticacao' %}">Cadastre-se agora</a>
+            </div>
+        </form>
+    </div>
 </div>
-
 {% endblock %}
