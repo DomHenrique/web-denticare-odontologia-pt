@@ -306,6 +306,7 @@ AWS_S3_ENDPOINT_URL = os.environ.get('AWS_S3_ENDPOINT_URL', 'https://jjpuzpjlcpk
 AWS_S3_FILE_OVERWRITE = False
 AWS_DEFAULT_ACL = None
 AWS_S3_VERIFY = True
+AWS_QUERYSTRING_AUTH = False  # Usa URLs públicas diretas sem assinatura bits (essencial para buckets públicos)
 
 # Django Storages & WhiteNoise
 STORAGES = {
@@ -317,20 +318,19 @@ STORAGES = {
     },
 }
 
-if DEBUG:
-    # Use local storage in development if keys are missing
-    if not AWS_ACCESS_KEY_ID or not AWS_SECRET_ACCESS_KEY:
+if not AWS_ACCESS_KEY_ID or not AWS_SECRET_ACCESS_KEY:
+    if DEBUG:
+        # Voltar para local em dev se as chaves não existirem
         STORAGES["default"] = {
             "BACKEND": "django.core.files.storage.FileSystemStorage",
         }
 
 MEDIA_URL = '/media/'
-# Se estiver usando S3, o MEDIA_URL padrão do django-storages será usado, 
-# mas mantemos o local para fallback ou compatibilidade de caminhos relativos
-if STORAGES["default"]["BACKEND"] == "django.core.files.storage.FileSystemStorage":
-    MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+# Se estiver usando S3, gera a URL base pública do Supabase
+if STORAGES["default"]["BACKEND"] == "storages.backends.s3boto3.S3Boto3Storage":
+    MEDIA_URL = f'https://jjpuzpjlcpklngxgdchi.supabase.co/storage/v1/object/public/{AWS_STORAGE_BUCKET_NAME}/'
 else:
-    # No S3, o MEDIA_URL é gerado automaticamente pelo boto3, 
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
     # mas podemos forçar se necessário
     MEDIA_URL = f'https://jjpuzpjlcpklngxgdchi.supabase.co/storage/v1/object/public/{AWS_STORAGE_BUCKET_NAME}/'
 
