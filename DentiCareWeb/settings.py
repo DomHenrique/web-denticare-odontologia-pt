@@ -306,7 +306,9 @@ AWS_S3_ENDPOINT_URL = os.environ.get('AWS_S3_ENDPOINT_URL', 'https://jjpuzpjlcpk
 AWS_S3_FILE_OVERWRITE = False
 AWS_DEFAULT_ACL = None
 AWS_S3_VERIFY = True
-AWS_QUERYSTRING_AUTH = False  # Usa URLs públicas diretas sem assinatura bits (essencial para buckets públicos)
+AWS_QUERYSTRING_AUTH = False  # Usa URLs públicas diretas sem assinatura bits
+# Força o uso do endpoint público do Supabase para visualização (evita 403 do gateway S3)
+AWS_S3_CUSTOM_DOMAIN = f'jjpuzpjlcpklngxgdchi.supabase.co/storage/v1/object/public/{AWS_STORAGE_BUCKET_NAME}'
 
 # Django Storages & WhiteNoise
 STORAGES = {
@@ -326,13 +328,14 @@ if not AWS_ACCESS_KEY_ID or not AWS_SECRET_ACCESS_KEY:
         }
 
 MEDIA_URL = '/media/'
-# Se estiver usando S3, gera a URL base pública do Supabase
+# Configuração final da URL de mídia
 if STORAGES["default"]["BACKEND"] == "storages.backends.s3boto3.S3Boto3Storage":
-    MEDIA_URL = f'https://jjpuzpjlcpklngxgdchi.supabase.co/storage/v1/object/public/{AWS_STORAGE_BUCKET_NAME}/'
+    # Link público direto (Supabase Object API)
+    MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/'
 else:
+    # Fallback local
     MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-    # mas podemos forçar se necessário
-    MEDIA_URL = f'https://jjpuzpjlcpklngxgdchi.supabase.co/storage/v1/object/public/{AWS_STORAGE_BUCKET_NAME}/'
+    MEDIA_URL = '/media/'
 
 
 
