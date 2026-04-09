@@ -23,4 +23,6 @@ sqlparse==0.5.4
 typing_extensions==4.15.0
 tzdata==2025.3
 whitenoise==6.11.0
-crispy-bootstrap5==2024.10
+crispy-bootstrap5==2026.3
+django-storages[s3]==1.14.6
+boto3==1.42.86

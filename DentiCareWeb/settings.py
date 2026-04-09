@@ -177,9 +177,7 @@ TEMPLATES = [
     {
 
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-
-        'DIRS': [],
-
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
 
         'OPTIONS': {
@@ -293,35 +291,48 @@ USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
-
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
-
-
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
+# Supabase Storage Configuration (S3 Compatible)
+AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
+AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME', 'denticare-media')
+AWS_S3_REGION_NAME = os.environ.get('AWS_S3_REGION_NAME', 'us-west-2')
+AWS_S3_ENDPOINT_URL = os.environ.get('AWS_S3_ENDPOINT_URL', 'https://jjpuzpjlcpklngxgdchi.supabase.co/storage/v1/s3')
 
+AWS_S3_FILE_OVERWRITE = False
+AWS_DEFAULT_ACL = None
+AWS_S3_VERIFY = True
 
-if not DEBUG:
+# Django Storages & WhiteNoise
+STORAGES = {
+    "default": {
+        "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
 
-    # Tell Django to copy static assets into a path called `staticfiles` (this is specific to Render)
-
-    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-
-    # Enable the WhiteNoise storage backend, which compresses static files to reduce disk use
-
-    # and renames the files with unique names for each version to support long-term caching
-
-    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-
-
-
-
+if DEBUG:
+    # Use local storage in development if keys are missing
+    if not AWS_ACCESS_KEY_ID or not AWS_SECRET_ACCESS_KEY:
+        STORAGES["default"] = {
+            "BACKEND": "django.core.files.storage.FileSystemStorage",
+        }
 
 MEDIA_URL = '/media/'
-
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+# Se estiver usando S3, o MEDIA_URL padrão do django-storages será usado, 
+# mas mantemos o local para fallback ou compatibilidade de caminhos relativos
+if STORAGES["default"]["BACKEND"] == "django.core.files.storage.FileSystemStorage":
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+else:
+    # No S3, o MEDIA_URL é gerado automaticamente pelo boto3, 
+    # mas podemos forçar se necessário
+    MEDIA_URL = f'https://jjpuzpjlcpklngxgdchi.supabase.co/storage/v1/object/public/{AWS_STORAGE_BUCKET_NAME}/'
 
 
 
@@ -476,10 +487,10 @@ JAZZMIN_SETTINGS = {
     # UI Tweaks #
     #############
     # Relative paths to custom CSS/JS scripts (must be present in static files)
-    "custom_css": None,
-    "custom_js": None,
+    "custom_css": "admin/css/custom_admin.css",
+    "custom_js": "admin/js/admin_forms.js",
     # Whether to show the UI customizer on the sidebar
-    "show_ui_builder": True,
+    "show_ui_builder": False,
 
     "changeform_format": "horizontal_tabs",
     # override change forms on a per modeladmin basis
@@ -491,7 +502,7 @@ JAZZMIN_UI_TWEAKS = {
     "footer_small_text": True,
     "body_small_text": False,
     "brand_small_text": False,
-    "brand_colour": "navbar-light",
+    "brand_colour": "navbar-teal",
     "accent": "accent-primary",
     "navbar": "navbar-white navbar-light",
     "no_navbar_border": False,
@@ -499,7 +510,7 @@ JAZZMIN_UI_TWEAKS = {
     "layout_boxed": False,
     "footer_fixed": False,
     "sidebar_fixed": True,
-    "sidebar": "sidebar-light-primary",
+    "sidebar": "sidebar-light-teal",
     "sidebar_nav_small_text": False,
     "sidebar_disable_expand": False,
     "sidebar_nav_child_indent": True,
@@ -507,7 +518,7 @@ JAZZMIN_UI_TWEAKS = {
     "sidebar_nav_legacy_style": False,
     "sidebar_nav_flat_style": True,
     "theme": "litera",
-    "dark_mode_theme": "darkly",
+    "dark_mode_theme": None,
     "button_classes": {
         "primary": "btn-primary",
         "secondary": "btn-secondary",
