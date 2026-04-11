@@ -264,12 +264,14 @@
     </footer>
 
     {% if unidades.0 %}
-    <a class="fixed bottom-8 right-8 z-50 bg-green-500 hover:bg-green-600 text-white rounded-full p-4 shadow-2xl transition-all transform hover:scale-110 active:scale-95 flex items-center justify-center group"
-        href="https://wa.me/{{ unidades.0.whatsapp|cut:' '|cut:'-'|cut:'('|cut:')' }}" target="_blank">
-        <span class="material-icons">whatsapp</span>
-        <span
-            class="max-w-0 overflow-hidden group-hover:max-w-xs group-hover:ml-2 transition-all duration-500 whitespace-nowrap font-bold">Fale
-            Conosco</span>
+    <!-- WhatsApp Floating Button -->
+    <a class="fixed bottom-6 right-6 z-50 flex items-center gap-2 bg-gradient-to-r from-green-400 to-green-600 hover:from-green-500 hover:to-green-700 text-white px-4 py-3 rounded-full shadow-xl hover:shadow-green-500/30 transition-all transform hover:-translate-y-1 hover:scale-105 group border-2 border-white/20"
+        href="https://wa.me/{{ unidades.0.whatsapp|cut:' '|cut:'-'|cut:'('|cut:')' }}?text=Ol%C3%A1!%20Gostaria%20de%20saber%20mais%20sobre%20os%20servi%C3%A7os%20da%20DentiCare." target="_blank" aria-label="Fale conosco pelo WhatsApp">
+        <div class="relative flex items-center justify-center">
+            <span class="absolute inline-flex h-full w-full rounded-full bg-green-300 opacity-75 group-hover:animate-ping"></span>
+            <span class="material-icons text-3xl relative z-10 drop-shadow-md">whatsapp</span>
+        </div>
+        <span class="font-bold text-sm tracking-wide hidden sm:block pr-2 drop-shadow-md">Fale Conosco</span>
     </a>
     {% endif %}
     </body>
