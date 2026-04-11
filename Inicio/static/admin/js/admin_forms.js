@@ -116,8 +116,32 @@ function initFormProgress() {
             };
 
             xhr.open('POST', form.action, true);
-            // Django CSRF is needed, but FormData usually handles it if the token is in the form
+            
+            // Django CSRF is mandatory for AJAX POST
+            const csrftoken = getCookie('csrftoken');
+            if (csrftoken) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+            
             xhr.send(formData);
         });
     });
+}
+
+/**
+ * Helper to get cookie value by name
+ */
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
 }
