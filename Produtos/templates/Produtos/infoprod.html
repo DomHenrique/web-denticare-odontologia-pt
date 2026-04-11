@@ -70,12 +70,12 @@
                         href="{% url 'contato' %}">
                         Contate-nos
                     </a>
-                    <div class="relative cursor-pointer group" onclick="window.location.href='{% url 'carro' %}'">
+                    <div class="relative cursor-pointer group" onclick="window.location.href='#'">
                         <span
                             class="material-icons text-gray-600 dark:text-gray-300 group-hover:text-primary transition-colors">shopping_cart</span>
                         <span
                             class="absolute -top-2 -right-2 bg-primary text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center border-2 border-white dark:border-card-dark">
-                            {{ request.session.carro.items|length|default:0 }}
+                            {{ total_produto|default:0 }}
                         </span>
                     </div>
                     {% if user.is_authenticated %}
