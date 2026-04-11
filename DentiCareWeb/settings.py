@@ -146,8 +146,9 @@ if not DEBUG:
 
 # CSRF Trusted Origins é necessário para Django 4.0+ quando usando HTTPS e domínios customizados
 # Independente do modo DEBUG, deve carregar as origens baseadas nos ALLOWED_HOSTS
-if ALLOWED_HOSTS_STR:
-    CSRF_TRUSTED_ORIGINS = [f"https://{host.strip()}" for host in ALLOWED_HOSTS_STR.split(',')]
+CSRF_TRUSTED_ORIGINS = ['https://dentcare.hnperformancedigital.com.br']
+if ALLOWED_HOSTS_STR and ALLOWED_HOSTS_STR != '*':
+    CSRF_TRUSTED_ORIGINS.extend([f"https://{host.strip()}" for host in ALLOWED_HOSTS_STR.split(',')])
 
 
 
