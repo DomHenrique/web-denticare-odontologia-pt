@@ -300,6 +300,61 @@
         </div>
     </section>
 
+    {% if unidades.0 %}
+    <!-- Location Section -->
+    <section class="py-20 bg-background-light dark:bg-background-dark border-t border-gray-100 dark:border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold text-primary mb-4">Nossa Localização</h2>
+                <div class="w-24 h-1 bg-primary mx-auto rounded-full"></div>
+                <p class="mt-4 text-gray-600 dark:text-gray-300">Venha nos fazer uma visita na nossa unidade.</p>
+            </div>
+            
+            <div class="bg-white dark:bg-card-dark rounded-2xl shadow-xl overflow-hidden border border-gray-100 dark:border-gray-800">
+                <div class="grid grid-cols-1 lg:grid-cols-3">
+                    <div class="p-8 lg:p-12 flex flex-col justify-center">
+                        <div class="mb-8">
+                            <span class="material-icons text-primary text-4xl mb-4">location_on</span>
+                            <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">{{ unidades.0.nome }}</h3>
+                            <p class="text-gray-600 dark:text-gray-400">{{ unidades.0.endereco }}</p>
+                            <p class="text-gray-600 dark:text-gray-400 mt-1">{{ unidades.0.cidade }} - {{ unidades.0.estado }}</p>
+                        </div>
+                        
+                        <div class="space-y-4">
+                            <div class="flex items-center text-gray-600 dark:text-gray-400">
+                                <span class="material-icons mr-3 text-primary">phone</span>
+                                <span>{{ unidades.0.telefone }}</span>
+                            </div>
+                            <div class="flex items-center text-gray-600 dark:text-gray-400">
+                                <span class="material-icons mr-3 text-primary">email</span>
+                                <span>{{ unidades.0.email }}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-10">
+                            <a href="https://maps.google.com/maps?q={{ unidades.0.endereco|urlencode }},{{ unidades.0.cidade|urlencode }},{{ unidades.0.estado|urlencode }}" target="_blank" class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-lg shadow-sm text-white bg-primary hover:bg-blue-600 transition-colors w-full justify-center">
+                                Traçar Rota
+                                <span class="material-icons ml-2">directions</span>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="col-span-2 h-[400px] lg:h-auto min-h-[400px] bg-gray-200">
+                        <iframe 
+                            width="100%" 
+                            height="100%" 
+                            frameborder="0" 
+                            style="border:0" 
+                            src="https://maps.google.com/maps?q={{ unidades.0.endereco|urlencode }}%20{{ unidades.0.cidade|urlencode }}%20{{ unidades.0.estado|urlencode }}&t=&z=15&ie=UTF8&iwloc=&output=embed" 
+                            allowfullscreen>
+                        </iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    {% endif %}
+
     <footer class="bg-gray-50 dark:bg-background-dark border-t border-gray-200 dark:border-gray-700 pt-16 pb-8">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
